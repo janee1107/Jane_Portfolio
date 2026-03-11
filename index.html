@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name — UI/UX Engineer</title>
+    <meta name="description"
+        content="UI/UX Engineer based in Taiwan. Bridging the gap between complex systems and serene human experiences.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        /* =============================================
+   🎨 DESIGN TOKENS
+   ============================================= */
+        :root {
+            --font-serif: 'Noto Serif TC', Georgia, serif;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            --c-bg: #FAFAFA;
+            --c-white: #FFFFFF;
+            --c-gray-50: #F9FAFB;
+            --c-gray-100: #F3F4F6;
+            --c-gray-200: #E5E7EB;
+            --c-gray-300: #D1D5DB;
+            --c-gray-400: #9CA3AF;
+            --c-gray-500: #6B7280;
+            --c-gray-600: #4B5563;
+            --c-gray-700: #374151;
+            --c-gray-900: #111827;
+            --nav-height: 70px;
+            --transition: 0.5s cubic-bezier(0.87, 0, 0.13, 1);
+        }
+
+        /* ---- Reset ---- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: var(--nav-height);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--c-bg);
+            color: var(--c-gray-900);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        ::selection {
+            background: var(--c-gray-200);
+            color: var(--c-gray-900);
+        }
+
+        /* ---- Utilities ---- */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+        }
+
+        .upper {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .serif {
+            font-family: var(--font-serif);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =============================================
+   🧭 NAVBAR
+   ============================================= */
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            height: var(--nav-height);
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        #navbar.scrolled {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+        }
+
+        .nav-logo {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--c-gray-500);
+            transition: color 0.3s;
+        }
+
+        #navbar.scrolled .nav-logo {
+            color: var(--c-gray-900);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            transition: color 0.3s;
+            padding: 4px 0;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--c-gray-900);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--c-gray-900);
+        }
+
+        .nav-link.active::after,
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-hamburger {
+            display: none;
+            color: var(--c-gray-600);
+            padding: 4px;
+        }
+
+        .nav-hamburger svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        /* Lang toggle */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        #lang-toggle {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            padding: 4px 10px;
+            border: 1px solid var(--c-gray-200);
+            border-radius: 9999px;
+            transition: color 0.25s, border-color 0.25s, background 0.25s;
+        }
+
+        #lang-toggle:hover {
+            color: var(--c-gray-900);
+            border-color: var(--c-gray-400);
+            background: var(--c-gray-50);
+        }
+
+        /* ---- Mobile menu ---- */
+        #mobile-menu {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        #mobile-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--c-gray-400);
+            padding: 8px;
+        }
+
+        .mobile-menu-close svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .mobile-nav-link {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            color: var(--c-gray-900);
+            transition: color 0.3s;
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--c-gray-400);
+        }
+
+        /* =============================================
+   🏠 HERO
+   ============================================= */
+        #home {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 1.5rem;
+            overflow: hidden;
+            background: var(--c-bg);
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .hero-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            mix-blend-mode: multiply;
+            animation: blob-pulse 10s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: rgba(219, 234, 254, 0.5);
+        }
+
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: rgba(255, 228, 230, 0.5);
+            animation-delay: -5s;
+            animation-direction: reverse;
+        }
+
+        .blob-3 {
+            top: 20%;
+            right: 10%;
+            width: 35vw;
+            height: 35vw;
+            background: rgba(204, 251, 241, 0.4);
+            animation-delay: -3s;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(2px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 52rem;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            margin-bottom: 2rem;
+            animation: fadeInDown 1.2s ease-out 0.4s both;
+        }
+
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2.4rem, 6vw, 4.5rem);
+            color: var(--c-gray-900);
+            line-height: 1.12;
+            white-space: pre-line;
+            margin-bottom: 1.25rem;
+            animation: fadeInUp 1.2s ease-out 0.7s both;
+        }
+
+        .hero-zh {
+            font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+            color: var(--c-gray-500);
+            font-weight: 300;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1.2s ease-out 1s both;
+        }
+
+        .hero-sub {
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+            color: var(--c-gray-400);
+            max-width: 36rem;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 1.2s ease-out 1.2s both;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            background: var(--c-gray-900);
+            color: #fff;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 1.2s ease-out 1.5s both;
+        }
+
+        .hero-cta:hover {
+            transform: scale(1.04);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-cta svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            transition: transform 0.3s;
+        }
+
+        .hero-cta:hover svg {
+            transform: translateX(4px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            animation: fadeIn 1.2s ease-out 2.2s both;
+        }
+
+        .scroll-text {
+            font-size: 0.55rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 48px;
+            background: var(--c-gray-200);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--c-gray-500);
+            animation: scroll-travel 2s ease-in-out infinite;
+        }
+
+        /* =============================================
+   🧠 ETHOS
+   ============================================= */
+        #ethos {
+            padding: 8rem 1.5rem;
+            background: var(--c-white);
+        }
+
+        .ethos-inner {
+            max-width: 72rem;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+        }
+
+        .section-eyebrow {
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            margin-bottom: 2rem;
+        }
+
+        .ethos-quote {
+            font-family: var(--font-serif);
+            font-size: clamp(1.25rem, 2.5vw, 2rem);
+            color: var(--c-gray-900);
+            line-height: 1.7;
+            white-space: pre-line;
+            border-left: 2px solid var(--c-gray-100);
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .ethos-quote::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 0;
+            width: 2px;
+            height: 3rem;
+            background: linear-gradient(to bottom, var(--c-gray-300), transparent);
+        }
+
+        .about-text {
+            color: var(--c-gray-500);
+            font-weight: 300;
+            line-height: 1.9;
+            font-size: 0.9rem;
+        }
+
+        .about-text p+p {
+            margin-top: 1.25rem;
+        }
+
+        .skills-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            margin-bottom: 1.25rem;
+            margin-top: 2.5rem;
+        }
+
+        .skills-label::before {
+            content: '';
+            display: block;
+            width: 12px;
+            height: 1px;
+            background: var(--c-gray-300);
+        }
+
+        .skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        /* Skill accordion */
+        .skill-item {
+            border: 1px solid var(--c-gray-100);
+            border-radius: 12px;
+            background: var(--c-white);
+            overflow: hidden;
+            transition: border-color 0.4s, box-shadow 0.4s;
+        }
+
+        .skill-item:hover {
+            border-color: var(--c-gray-200);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .skill-item.open {
+            border-color: var(--c-gray-200);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.1rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .skill-name {
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: var(--c-gray-700);
+        }
+
+        .skill-chevron {
+            color: var(--c-gray-400);
+            transition: transform 0.2s ease-out;
+        }
+
+        .skill-chevron svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .skill-item.open .skill-chevron {
+            transform: rotate(180deg);
+        }
+
+        .skill-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.22s ease-out, opacity 0.18s ease;
+            opacity: 0;
+        }
+
+        .skill-item.open .skill-body {
+            max-height: 160px;
+            opacity: 1;
+        }
+
+        .skill-desc {
+            font-size: 0.78rem;
+            color: var(--c-gray-500);
+            font-weight: 300;
+            line-height: 1.75;
+            padding: 0 1.1rem 1rem;
+            border-left: 2px solid var(--c-gray-100);
+            margin-left: 1.1rem;
+        }
+
+        /* Philosophy */
+        .philosophy {
+            padding-top: 5rem;
+            margin-top: 5rem;
+            border-top: 1px solid var(--c-gray-100);
+        }
+
+        .philosophy-label {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        .philosophy-item .phi-num {
+            font-size: 0.6rem;
+            font-family: monospace;
+            color: var(--c-gray-300);
+            margin-bottom: 0.75rem;
+            transition: color 0.3s;
+        }
+
+        .philosophy-item:hover .phi-num {
+            color: var(--c-gray-500);
+        }
+
+        .phi-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--c-gray-900);
+            margin-bottom: 0.6rem;
+        }
+
+        .phi-desc {
+            font-size: 0.82rem;
+            color: var(--c-gray-500);
+            font-weight: 300;
+            line-height: 1.75;
+        }
+
+        /* =============================================
+   🖼 WORKS
+   ============================================= */
+        #works {
+            padding: 8rem 1.5rem;
+            background: #FCFCFC;
+            border-top: 1px solid var(--c-gray-100);
+        }
+
+        .works-inner {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            color: var(--c-gray-900);
+            margin-top: 0.75rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-img-wrap {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            background: var(--c-gray-50);
+            aspect-ratio: 4/3;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: box-shadow 0.5s ease;
+        }
+
+        .project-card:hover .project-img-wrap {
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1);
+            transition: transform 1s ease-out;
+        }
+
+        .project-card:hover .project-img-wrap img {
+            transform: scale(1.05);
+        }
+
+        .project-img-wrap .img-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0);
+            transition: background 0.4s;
+        }
+
+        .project-card:hover .img-overlay {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* NDA card */
+        .nda-card {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--c-gray-100), var(--c-gray-200));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nda-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .nda-inner svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--c-gray-400);
+            fill: none;
+            stroke-width: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .nda-title {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--c-gray-500);
+            font-weight: 500;
+        }
+
+        .nda-sub {
+            font-size: 0.6rem;
+            color: var(--c-gray-400);
+            margin-top: 0.35rem;
+        }
+
+        /* NDA breathing animation */
+        .nda-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 60% 40%, rgba(180, 180, 200, 0.25), transparent 70%);
+            animation: blob-pulse 6s ease-in-out infinite;
+        }
+
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .project-meta span {
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--c-gray-500);
+            font-weight: 500;
+        }
+
+        .project-meta .dot {
+            width: 16px;
+            height: 1px;
+            background: var(--c-gray-300);
+        }
+
+        .project-title {
+            font-family: var(--font-serif);
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: var(--c-gray-900);
+            margin-bottom: 0.4rem;
+            transition: color 0.3s;
+        }
+
+        .project-card:hover .project-title {
+            color: var(--c-gray-600);
+        }
+
+        .project-role {
+            font-size: 0.8rem;
+            color: var(--c-gray-500);
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .project-desc {
+            font-size: 0.82rem;
+            color: var(--c-gray-600);
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            background: var(--c-gray-50);
+            padding: 3px 8px;
+            border-radius: 2px;
+        }
+
+        /* =============================================
+   📚 CURATION
+   ============================================= */
+        #curation {
+            padding: 6rem 1.5rem;
+            background: var(--c-white);
+            border-top: 1px solid var(--c-gray-50);
+        }
+
+        .curation-inner {
+            max-width: 72rem;
+            margin: 0 auto;
+        }
+
+        .curation-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-bottom: 1px solid var(--c-gray-100);
+            padding-bottom: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .curation-sub {
+            font-size: 0.75rem;
+            color: var(--c-gray-400);
+            font-weight: 300;
+            max-width: 22rem;
+        }
+
+        .inspiration-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        .inspiration-card {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--c-gray-100);
+            background: rgba(249, 250, 251, 0.5);
+            transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, transform 0.4s;
+        }
+
+        .inspiration-card:hover {
+            background: var(--c-white);
+            border-color: var(--c-gray-200);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .insp-cat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.6rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+            margin-bottom: 1.25rem;
+            transition: color 0.3s;
+        }
+
+        .inspiration-card:hover .insp-cat {
+            color: var(--c-gray-700);
+        }
+
+        .insp-cat svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .insp-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--c-gray-900);
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            transition: color 0.3s;
+        }
+
+        .inspiration-card:hover .insp-title {
+            color: #2563EB;
+        }
+
+        .insp-arrow {
+            flex-shrink: 0;
+            margin-top: 2px;
+            opacity: 0;
+            transform: translate(-4px, 4px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .insp-arrow svg {
+            width: 13px;
+            height: 13px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .inspiration-card:hover .insp-arrow {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        .insp-author {
+            font-size: 0.72rem;
+            color: var(--c-gray-500);
+            font-weight: 300;
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+
+        /* =============================================
+   ✉️ CONTACT
+   ============================================= */
+        #contact {
+            padding: 8rem 1.5rem;
+            background: var(--c-bg);
+            border-top: 1px solid var(--c-gray-100);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .contact-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 5vw, 3.8rem);
+            color: var(--c-gray-900);
+            line-height: 1.2;
+            white-space: pre-line;
+            margin-bottom: 2.5rem;
+        }
+
+        .contact-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.75rem;
+            border-radius: 9999px;
+            border: 1px solid var(--c-gray-200);
+            background: var(--c-white);
+            color: var(--c-gray-900);
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 3.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: border-color 0.4s, box-shadow 0.4s, transform 0.3s;
+        }
+
+        .contact-cta:hover {
+            border-color: var(--c-gray-300);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+            transform: translateY(-2px);
+        }
+
+        .contact-cta svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--c-gray-400);
+            fill: none;
+            transition: stroke 0.3s;
+        }
+
+        .contact-cta:hover svg {
+            stroke: var(--c-gray-900);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 2.5rem;
+            justify-content: center;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--c-gray-500);
+            transition: color 0.3s;
+        }
+
+        .social-link:hover {
+            color: var(--c-gray-900);
+        }
+
+        .social-link svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .footer-copy {
+            margin-top: 5rem;
+            font-size: 0.6rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--c-gray-400);
+        }
+
+        /* ---- Toast ---- */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--c-gray-900);
+            color: #fff;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+            white-space: nowrap;
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ---- Back to Top ---- */
+        #back-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 1.5rem;
+            z-index: 80;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--c-white);
+            border: 1px solid var(--c-gray-200);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        #back-top.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        #back-top:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        #back-top svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--c-gray-600);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* =============================================
+   📱 RESPONSIVE
+   ============================================= */
+        @media (min-width: 768px) {
+            .ethos-inner {
+                grid-template-columns: 1fr 1fr;
+                column-gap: 5rem;
+            }
+
+            .ethos-right {
+                grid-row: 1;
+            }
+
+            .philosophy-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4rem 5rem;
+            }
+
+            .project-card:nth-child(even) {
+                margin-top: 5rem;
+            }
+
+            .project-img-wrap {
+                aspect-ratio: 3/4;
+            }
+
+            .inspiration-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .curation-header {
+                flex-direction: row;
+                align-items: flex-end;
+                justify-content: space-between;
+            }
+        }
+
+        /* =============================================
+   🎬 KEYFRAMES
+   ============================================= */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes blob-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+        }
+
+        @keyframes scroll-travel {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            60%,
+            100% {
+                transform: translateY(100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==============================
+     🧭 NAVBAR
+     ============================== -->
+    <nav id="navbar">
+        <button class="nav-logo" id="nav-logo">Your Name</button>
+        <div class="nav-links" id="nav-links">
+            <a class="nav-link" href="#ethos" data-section="ethos">Ethos</a>
+            <a class="nav-link" href="#works" data-section="works">Works</a>
+            <a class="nav-link" href="#curation" data-section="curation">Curation</a>
+            <a class="nav-link" href="#contact" data-section="contact">Contact</a>
+        </div>
+        <div class="nav-right">
+            <button id="lang-toggle" aria-label="Switch language">EN</button>
+            <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+                <svg viewBox="0 0 24 24">
+                    <line x1="3" y1="8" x2="21" y2="8" />
+                    <line x1="3" y1="16" x2="21" y2="16" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+        <button class="mobile-menu-close" id="mobile-close" aria-label="Close menu">
+            <svg viewBox="0 0 24 24">
+                <line x1="5" y1="5" x2="19" y2="19" />
+                <line x1="19" y1="5" x2="5" y2="19" />
+            </svg>
+        </button>
+        <nav class="mobile-nav-links">
+            <a class="mobile-nav-link" href="#home">Home</a>
+            <a class="mobile-nav-link" href="#ethos">Ethos</a>
+            <a class="mobile-nav-link" href="#works">Works</a>
+            <a class="mobile-nav-link" href="#curation">Curation</a>
+            <a class="mobile-nav-link" href="#contact">Contact</a>
+        </nav>
+    </div>
+
+    <!-- ==============================
+     🏠 HERO
+     ============================== -->
+    <section id="home">
+        <div class="hero-bg">
+            <div class="hero-blob blob-1"></div>
+            <div class="hero-blob blob-2"></div>
+            <div class="hero-blob blob-3"></div>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <p class="hero-eyebrow" id="hero-name">Your Name</p>
+            <h1 class="hero-title serif" id="hero-headline">Engineering the Invisible.
+                Designing the Poetic.</h1>
+            <p class="hero-zh" id="hero-zh">以程式構築隱形邏輯，以設計刻畫可見詩意。</p>
+            <p class="hero-sub" id="hero-sub">UI/UX Engineer based in Taiwan. Bridging the gap between complex systems
+                and serene human experiences.</p>
+            <a href="#ethos" class="hero-cta" id="hero-cta">
+                閱讀我的故事
+                <svg viewBox="0 0 24 24" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12,5 19,12 12,19" />
+                </svg>
+            </a>
+        </div>
+        <div class="scroll-indicator">
+            <span id="scroll-text" class="scroll-text">Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ==============================
+     🧠 ETHOS
+     ============================== -->
+    <section id="ethos">
+        <div class="ethos-inner">
+            <!-- Left: Quote -->
+            <div class="fade-in">
+                <p id="ethos-eyebrow" class="section-eyebrow upper">The Ethos</p>
+                <blockquote id="ethos-quote" class="ethos-quote serif">真正的科技，是隱形的。
+                    它不喧賓奪主，而是如同早晨的微光，靜靜地照亮使用者的意圖。</blockquote>
+            </div>
+
+            <!-- Right: About + Skills -->
+            <div class="fade-in ethos-right" style="transition-delay:0.12s">
+                <div id="about-text" class="about-text">
+                    <p>身為一位深諳 Apple 設計哲學的 UI/UX
+                        工程師，我相信最極致的使用者體驗，源自於對細節近乎苛求的堅持。我的工作不僅僅是畫出美觀的介面或是寫出高效的元件，更是要在「機器邏輯」與「人類情感」之間，搭建一座優雅的橋樑。</p>
+                    <p>在過去的經驗中，無論是在聯發科技處理極度複雜的底層系統視覺化，或是在快節奏的新創環境中打造從零到一的產品，我始終致力於讓每一次的點擊、每一次的滑動，都如同閱讀一本好書般流暢且沉浸。</p>
+                </div>
+
+                <p id="competencies-label" class="skills-label upper"><span>Core Competencies</span></p>
+                <div class="skills-list" id="skills-list">
+                    <!-- JS renders skill accordion items here -->
+                </div>
+            </div>
+
+            <!-- Philosophy — spans full width -->
+            <div class="philosophy fade-in" style="grid-column:1/-1; transition-delay:0.2s">
+                <p id="philosophy-label" class="section-eyebrow upper philosophy-label">Design Philosophy</p>
+                <div class="philosophy-grid" id="philosophy-grid">
+                    <!-- JS renders philosophy items here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================
+     🖼 WORKS
+     ============================== -->
+    <section id="works">
+        <div class="works-inner">
+            <div class="section-header fade-in">
+                <p id="artifacts-eyebrow" class="section-eyebrow upper">The Artifacts</p>
+                <h2 id="selected-works" class="section-title serif">Selected Works</h2>
+            </div>
+            <div class="projects-grid" id="projects-grid">
+                <!-- JS renders project cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================
+     📚 CURATION
+     ============================== -->
+    <section id="curation">
+        <div class="curation-inner fade-in">
+            <div class="curation-header">
+                <div>
+                    <p id="curation-eyebrow" class="section-eyebrow upper">Curation</p>
+                    <h2 id="inspired-title" class="section-title serif" style="font-size:clamp(1.4rem,2.5vw,1.8rem)">
+                        Currently Inspired By</h2>
+                </div>
+                <p id="curation-sub" class="curation-sub">A small digital library of thoughts, books, and resources
+                    shaping my perspective.</p>
+            </div>
+            <div class="inspiration-grid" id="inspiration-grid">
+                <!-- JS renders inspiration cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================
+     ✉️ CONTACT
+     ============================== -->
+    <section id="contact">
+        <div class="fade-in" style="max-width:40rem;width:100%;">
+            <p id="epilogue-eyebrow" class="section-eyebrow upper" style="margin-bottom:2rem">The Epilogue</p>
+            <h2 id="contact-title" class="contact-title serif">Let's create something
+                meaningful together.</h2>
+
+            <!-- 💡 維護：修改下方的 data-email 為你的 email -->
+            <button class="contact-cta" id="resume-btn">
+                <svg viewBox="0 0 24 24" stroke-width="1.5">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <polyline points="3,5 12,13 21,5" />
+                </svg>
+                <span id="resume-btn-text">Request Full Resume</span>
+            </button>
+
+            <div class="social-links" id="social-links">
+                <!-- JS renders social links here -->
+            </div>
+            <p class="footer-copy" id="footer-copy"></p>
+        </div>
+    </section>
+
+    <!-- Toast notification -->
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Back to Top -->
+    <button id="back-top" aria-label="Back to top">
+        <svg viewBox="0 0 24 24">
+            <polyline points="18,15 12,9 6,15" />
+        </svg>
+    </button>
+
+    <!-- ==============================
+     ⚙️ JAVASCRIPT
+     ============================== -->
+    <script>
+        // =========================================================
+        // ✏️  維護區：修改這裡的資料，網站自動更新
+        // 語言切換：zh = 中文（預設），en = 英文
+        // =========================================================
+        let currentLang = 'zh';
+
+        const DATA = {
+            name: "Your Name",
+            email: "hello@yourdomain.com",
+
+            // 雙語內容：zh = 中文, en = 英文
+            hero: {
+                headline: {
+                    zh: "Engineering the Invisible.\nDesigning the Poetic.",
+                    en: "Engineering the Invisible.\nDesigning the Poetic."
+                },
+                subZh: "以程式構築隱形邏輯，以設計刻畫可見詩意。",
+                sub: {
+                    zh: "UI/UX 工程師，台灣。致力於在複雜系統與純粹的人類體驗之間，搭起一座最優雅的橋樑。",
+                    en: "UI/UX Engineer based in Taiwan. Bridging the gap between complex systems and serene human experiences."
+                },
+                cta: { zh: "閱讀我的故事", en: "Read My Story" }
+            },
+
+            ethos: {
+                quote: {
+                    zh: "真正的科技，是隱形的。\n它不喧賓奪主，而是如同早晨的微光，靜靜地照亮使用者的意圖。",
+                    en: "The best technology is invisible.\nIt doesn't demand attention — it quietly illuminates the user's intent, like morning light."
+                },
+                about: {
+                    zh: [
+                        "身為一位深諳 Apple 設計哲學的 UI/UX 工程師，我相信最極致的使用者體驗，源自於對細節近乎苛求的堅持。我的工作不僅僅是畫出美觀的介面或是寫出高效的元件，更是要在「機器邏輯」與「人類情感」之間，搭建一座優雅的橋樑。",
+                        "在過去的經驗中，無論是在聯發科技處理極度複雜的底層系統視覺化，或是在快節奏的新創環境中打造從零到一的產品，我始終致力於讓每一次的點擊、每一次的滑動，都如同閱讀一本好書般流暢且沉浸。"
+                    ],
+                    en: [
+                        "As a UI/UX Engineer deeply versed in Apple's design philosophy, I believe the most extraordinary user experiences stem from an almost obsessive attention to detail — not just crafting beautiful interfaces or efficient components, but building an elegant bridge between machine logic and human emotion.",
+                        "Whether visualizing complex semiconductor data at MediaTek or building zero-to-one products in fast-moving startups, my goal remains unchanged: to make every click, every scroll, feel as effortless and immersive as reading a great book."
+                    ]
+                }
+            },
+
+            skills: [
+                {
+                    name: "React & WebGL",
+                    desc: {
+                        zh: "在聯發科主導前端重構，將龐大複雜的底層數據轉化為視覺化圖表，把萬筆數據渲染時間從 3 秒優化至 60fps，實現絲滑互動。",
+                        en: "Led frontend refactoring at MediaTek. Transformed massive raw data into interactive visualizations, reducing render time from 3s to a smooth 60fps experience."
+                    }
+                },
+                {
+                    name: "UI/UX Architecture",
+                    desc: {
+                        zh: "深諳複雜系統架構，擅長在龐大的商業邏輯中找出最簡潔的介面解法，讓「專業工具」也能擁有「消費級」的直覺體驗。",
+                        en: "Proficient in complex system architecture. Skilled at distilling sprawling business logic into the simplest possible interface — making professional tools feel consumer-grade."
+                    }
+                },
+                {
+                    name: "Design Systems",
+                    desc: {
+                        zh: "從零構建企業級 Design Token 與元件庫，統一跨產品線的視覺語彙，不僅提升設計一致性，更讓前端開發效率躍升 40%。",
+                        en: "Built enterprise-grade Design Token systems and component libraries from scratch — unifying visual language across product lines and boosting frontend efficiency by 40%."
+                    }
+                },
+                {
+                    name: "Micro-interactions",
+                    desc: {
+                        zh: "專注於微互動設計，透過 Framer Motion 與基於物理參數的動態效果（Spring physics），為產品注入如同 Apple 生態系般的生命力。",
+                        en: "Focused on micro-interaction design. Using Framer Motion and spring physics, I infuse products with the same sense of life and responsiveness found in Apple's ecosystem."
+                    }
+                }
+            ],
+
+            philosophy: [
+                {
+                    title: "Understand the System First",
+                    desc: {
+                        zh: "先懂底層邏輯與資料流，再畫介面。這確保了設計不僅優雅，且在工程上極度高效可行。",
+                        en: "Understand the underlying data flows and logic before designing the interface. Great design is only possible when it is also deeply feasible."
+                    }
+                },
+                {
+                    title: "Whitespace is a Feature",
+                    desc: {
+                        zh: "在充滿雜訊的時代，克制是一種美德。透過精準的減法與留白，讓使用者的注意力自然聚焦。",
+                        en: "In an age of noise, restraint is a virtue. Precise subtraction and thoughtful whitespace help users focus on what matters most."
+                    }
+                },
+                {
+                    title: "Motion as the Soul",
+                    desc: {
+                        zh: "靜態的設計只是骨架。恰到好處的轉場與微互動，才是讓產品產生「高級感」與「愉悅感」的關鍵。",
+                        en: "Static design is just a skeleton. Considered transitions and micro-interactions are what give a product its premium feel and emotional resonance."
+                    }
+                }
+            ],
+
+            // 💡 專案：將 isConfidential 設為 true 啟用 NDA 模式
+            //          imageUrl：填 Unsplash 網址，或本地路徑如 "img/project1.jpg"
+            projects: [
+                {
+                    title: "Semiconductor Data Visualization",
+                    role: {
+                        zh: "前端主工程師 & UX 負責人",
+                        en: "Lead Front-End & UX Engineer"
+                    },
+                    company: "聯發科技 MediaTek",
+                    year: "2024",
+                    desc: {
+                        zh: "為晶片研發團隊打造的內部數據視覺化平台。在不妥協效能的前提下，將數以萬計的複雜訊號轉化為直覺、優雅的互動圖表。大幅降低工程師除錯時間，提升跨部門協作效率。",
+                        en: "An internal data visualization platform for chip R&D teams. Transformed tens of thousands of complex signals into intuitive, elegant interactive charts — without compromising performance."
+                    },
+                    tags: ["React", "WebGL", "Data Viz", "UX Research"],
+                    isConfidential: true,
+                    imageUrl: "",
+                    link: "#"
+                },
+                {
+                    title: "Serene E-Commerce App",
+                    role: {
+                        zh: "UI/UX 設計師 & 開發者",
+                        en: "UI/UX Designer & Developer"
+                    },
+                    company: { zh: "個人專案", en: "Personal Project" },
+                    year: "2023",
+                    desc: {
+                        zh: "一個探討「留白」與「專注」的電商概念應用。透過極簡的元件系統與流暢的頁面轉場，將購物的焦慮感降至最低，讓選擇成為一種享受。",
+                        en: "A concept e-commerce app exploring whitespace and focused attention. Minimal component systems and fluid transitions reduce shopping anxiety, turning choice into a pleasure."
+                    },
+                    tags: ["React Native", "Tailwind", "Framer Motion"],
+                    isConfidential: false,
+                    imageUrl: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=1600&q=80",
+                    link: "#"
+                },
+                {
+                    title: "Design System: Aurora",
+                    role: { zh: "UI 工程師", en: "UI Engineer" },
+                    company: { zh: "前任科技公司", en: "Previous Tech Co." },
+                    year: "2022",
+                    desc: {
+                        zh: "主導建立公司首個跨平台設計系統。從 Design Token 的定義到 React 元件庫的實作，確保品牌視覺的一致性，並加速前端開發流程達 40%。",
+                        en: "Led the company's first cross-platform design system. From defining Design Tokens to implementing the React component library — ensuring visual consistency and boosting development speed by 40%."
+                    },
+                    tags: ["Design System", "Storybook", "TypeScript"],
+                    isConfidential: false,
+                    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80",
+                    link: "#"
+                }
+            ],
+
+            // 💡 靈感書房：替換 title / author / link 即可更新
+            inspirations: [
+                {
+                    category: { zh: "閱讀", en: "Reading" },
+                    icon: "book",
+                    title: "Build: An Unorthodox Guide to Making Things Worth Making",
+                    author: "Tony Fadell",
+                    link: "#"
+                },
+                {
+                    category: { zh: "寫作", en: "Writing" },
+                    icon: "pen",
+                    title: { zh: "如何在複雜系統中導入 Apple 級別的微互動體驗", en: "Introducing Apple-Grade Micro-interactions into Complex Systems" },
+                    author: { zh: "我的 LinkedIn 文章", en: "My LinkedIn Article" },
+                    link: "#"
+                },
+                {
+                    category: { zh: "學習中", en: "Learning" },
+                    icon: "sparkles",
+                    title: "Advanced Three.js & Shader Programming",
+                    author: { zh: "用於沉浸式數據視覺化", en: "For immersive data viz" },
+                    link: "#"
+                }
+            ],
+
+            // 💡 社群連結：將 url 替換為你的實際連結
+            social: [
+                { name: "LinkedIn", url: "#", icon: "linkedin" },
+                { name: "GitHub", url: "#", icon: "github" }
+            ],
+
+            // 雙語 UI 標籤
+            labels: {
+                zh: {
+                    navEthos: "核心理念", navWorks: "作品", navCuration: "書房", navContact: "聯絡",
+                    theEthos: "核心理念", competencies: "核心技能", philosophy: "設計哲學",
+                    theArtifacts: "作品集", selectedWorks: "精選作品",
+                    curation: "策展", currentlyInspired: "近期汲取靈感", curSub: "記錄正在塑造我思維的書、文字與學習。",
+                    theEpilogue: "終章", contactTitle: "讓我們一起，\n創造真正有意義的事。",
+                    requestResume: "索取完整履歷",
+                    confidential: "機密專案", ndaSub: "受 NDA 保護",
+                    scrollText: "滾動",
+                    footerSuffix: "版權所有。以詩意設計。"
+                },
+                en: {
+                    navEthos: "Ethos", navWorks: "Works", navCuration: "Curation", navContact: "Contact",
+                    theEthos: "The Ethos", competencies: "Core Competencies", philosophy: "Design Philosophy",
+                    theArtifacts: "The Artifacts", selectedWorks: "Selected Works",
+                    curation: "Curation", currentlyInspired: "Currently Inspired By", curSub: "A small digital library of thoughts, books, and resources shaping my perspective.",
+                    theEpilogue: "The Epilogue", contactTitle: "Let's create something\nmeaningful together.",
+                    requestResume: "Request Full Resume",
+                    confidential: "Confidential Project", ndaSub: "Protected under NDA",
+                    scrollText: "Scroll",
+                    footerSuffix: "All rights reserved. Designed with poetry."
+                }
+            }
+        };
+
+        // Helper: resolve a bilingual field
+        function t(field) {
+            if (!field || typeof field !== 'object') return field || '';
+            return field[currentLang] || field['en'] || '';
+        }
+
+        // =========================================================
+        // 🎨 SVG ICONS
+        // =========================================================
+        const Icons = {
+            chevronDown: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><polyline points="6,9 12,15 18,9"/></svg>`,
+            lock: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`,
+            book: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
+            pen: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
+            sparkles: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 17l.75 2.25L8 20l-2.25.75L5 23l-.75-2.25L2 20l2.25-.75L5 17z"/><path d="M19 2l.5 1.5L21 4l-1.5.5L19 6l-.5-1.5L17 4l1.5-.5L19 2z"/></svg>`,
+            arrowUpRight: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/></svg>`,
+            linkedin: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
+            github: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>`,
+            mail: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,5 12,13 21,5"/></svg>`
+        };
+
+        // =========================================================
+        // 🔨 RENDER FUNCTIONS
+        // =========================================================
+        function renderSkills() {
+            const container = document.getElementById('skills-list');
+            const L = DATA.labels[currentLang];
+            container.innerHTML = DATA.skills.map((skill, i) => `
+    <div class="skill-item" id="skill-${i}">
+      <button class="skill-header" onclick="toggleSkill(${i})" aria-expanded="false">
+        <span class="skill-name">${skill.name}</span>
+        <span class="skill-chevron">${Icons.chevronDown}</span>
+      </button>
+      <div class="skill-body" role="region">
+        <p class="skill-desc">${t(skill.desc)}</p>
+      </div>
+    </div>
+  `).join('');
+        }
+
+        function toggleSkill(i) {
+            const item = document.getElementById(`skill-${i}`);
+            const btn = item.querySelector('.skill-header');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.skill-item').forEach(el => {
+                el.classList.remove('open');
+                el.querySelector('.skill-header').setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        function renderPhilosophy() {
+            document.getElementById('philosophy-grid').innerHTML = DATA.philosophy.map((p, i) => `
+    <div class="philosophy-item">
+      <span class="phi-num">0${i + 1} /</span>
+      <h3 class="phi-title">${p.title}</h3>
+      <p class="phi-desc">${t(p.desc)}</p>
+    </div>
+  `).join('');
+        }
+
+        function renderProjects() {
+            const L = DATA.labels[currentLang];
+            document.getElementById('projects-grid').innerHTML = DATA.projects.map((p, i) => `
+    <div class="project-card fade-in" style="transition-delay:${i * 0.1}s">
+      <a href="${p.link}" class="project-img-wrap">
+        ${p.isConfidential ? `
+          <div class="nda-card">
+            <div class="nda-inner">
+              ${Icons.lock}
+              <span class="nda-title">${L.confidential}</span>
+              <span class="nda-sub">${L.ndaSub}</span>
+            </div>
+          </div>
+        ` : `
+          <img src="${p.imageUrl}" alt="${p.title}" loading="lazy">
+          <div class="img-overlay"></div>
+        `}
+      </a>
+      <div class="project-meta">
+        <span>${p.year}</span><span class="dot"></span><span>${t(p.company)}</span>
+      </div>
+      <h3 class="project-title serif">${p.title}</h3>
+      <p class="project-role">${t(p.role)}</p>
+      <p class="project-desc">${t(p.desc)}</p>
+      <div class="project-tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+    </div>
+  `).join('');
+        }
+
+        function renderInspirations() {
+            document.getElementById('inspiration-grid').innerHTML = DATA.inspirations.map(item => `
+    <a class="inspiration-card" href="${item.link}" target="${item.link !== '#' ? '_blank' : '_self'}" rel="noopener noreferrer">
+      <div class="insp-cat">${Icons[item.icon] || ''} ${t(item.category)}</div>
+      <div class="insp-title">
+        ${t(item.title)}
+        <span class="insp-arrow">${Icons.arrowUpRight}</span>
+      </div>
+      <p class="insp-author">${t(item.author)}</p>
+    </a>
+  `).join('');
+        }
+
+        function renderLabels() {
+            const L = DATA.labels[currentLang];
+            const H = DATA.hero;
+            // Nav
+            document.getElementById('nav-logo').textContent = DATA.name;
+            document.querySelectorAll('.nav-link').forEach(el => {
+                const map = { ethos: L.navEthos, works: L.navWorks, curation: L.navCuration, contact: L.navContact };
+                if (map[el.dataset.section]) el.textContent = map[el.dataset.section];
+            });
+            // Hero
+            document.getElementById('hero-name').textContent = DATA.name;
+            document.getElementById('hero-headline').textContent = t(H.headline);
+            document.getElementById('hero-zh').textContent = currentLang === 'zh' ? H.subZh : '';
+            document.getElementById('hero-sub').textContent = t(H.sub);
+            document.getElementById('hero-cta').childNodes[0].textContent = t(H.cta) + ' ';
+            document.getElementById('scroll-text').textContent = L.scrollText;
+            // Ethos section labels
+            const ethosEyebrow = document.getElementById('ethos-eyebrow');
+            if (ethosEyebrow) ethosEyebrow.textContent = L.theEthos;
+            const ethosQuote = document.getElementById('ethos-quote');
+            if (ethosQuote) ethosQuote.textContent = t(DATA.ethos.quote);
+            const aboutEl = document.getElementById('about-text');
+            if (aboutEl) aboutEl.innerHTML = t(DATA.ethos.about).map(p => `<p>${p}</p>`).join('');
+            const compLabel = document.getElementById('competencies-label');
+            if (compLabel) compLabel.querySelector('span') && (compLabel.querySelector('span').textContent = L.competencies);
+            const phiLabel = document.getElementById('philosophy-label');
+            if (phiLabel) phiLabel.textContent = L.philosophy;
+            // Works
+            const artifactsEyebrow = document.getElementById('artifacts-eyebrow');
+            if (artifactsEyebrow) artifactsEyebrow.textContent = L.theArtifacts;
+            const selectedWorksEl = document.getElementById('selected-works');
+            if (selectedWorksEl) selectedWorksEl.textContent = L.selectedWorks;
+            // Curation
+            const curationEyebrow = document.getElementById('curation-eyebrow');
+            if (curationEyebrow) curationEyebrow.textContent = L.curation;
+            const inspiredTitle = document.getElementById('inspired-title');
+            if (inspiredTitle) inspiredTitle.textContent = L.currentlyInspired;
+            const curSubEl = document.getElementById('curation-sub');
+            if (curSubEl) curSubEl.textContent = L.curSub;
+            // Contact
+            const epilogueEyebrow = document.getElementById('epilogue-eyebrow');
+            if (epilogueEyebrow) epilogueEyebrow.textContent = L.theEpilogue;
+            const contactTitleEl = document.getElementById('contact-title');
+            if (contactTitleEl) contactTitleEl.textContent = L.contactTitle;
+            const resumeBtn = document.getElementById('resume-btn-text');
+            if (resumeBtn) resumeBtn.textContent = L.requestResume;
+            // Footer
+            document.getElementById('footer-copy').textContent =
+                `© ${new Date().getFullYear()} ${DATA.name}. ${L.footerSuffix}`;
+            // Lang toggle shows the OTHER language
+            document.getElementById('lang-toggle').textContent = currentLang === 'zh' ? 'EN' : '中';
+        }
+
+        function renderSocial() {
+            document.getElementById('social-links').innerHTML = DATA.social.map(s => `
+    <a class="social-link" href="${s.url}" target="${s.url !== '#' ? '_blank' : '_self'}" rel="noopener noreferrer">
+      ${Icons[s.icon] || ''}
+      <span class="sr-only">${s.name}</span>
+      <span>${s.name}</span>
+    </a>
+  `).join('');
+        }
+
+        // Full re-render when language switches
+        function renderAll() {
+            renderSkills();
+            renderPhilosophy();
+            renderProjects();
+            renderInspirations();
+            renderLabels();
+        }
+
+        // =========================================================
+        // 🎯 INTERACTIONS
+        // =========================================================
+
+        // Navbar scroll + active section highlight
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = ['home', 'ethos', 'works', 'curation', 'contact'];
+        const backTop = document.getElementById('back-top');
+
+        window.addEventListener('scroll', () => {
+            const y = window.scrollY;
+            navbar.classList.toggle('scrolled', y > 50);
+            backTop.classList.toggle('show', y > 400);
+
+            // Active section highlight
+            let currentSection = 'home';
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top <= 100) currentSection = id;
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.section === currentSection);
+            });
+        }, { passive: true });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(el => {
+            el.addEventListener('click', e => {
+                const href = el.getAttribute('href');
+                if (!href || !href.startsWith('#')) return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                closeMobileMenu();
+            });
+        });
+
+        // Language toggle
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.documentElement.lang = currentLang;
+            renderAll();
+            // Re-observe fade-ins for any new elements
+            document.querySelectorAll('.fade-in:not(.visible)').forEach(el => io.observe(el));
+        });
+
+        // Mobile menu
+        const mobileMenu = document.getElementById('mobile-menu');
+        document.getElementById('hamburger').addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('mobile-close').addEventListener('click', closeMobileMenu);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileMenu(); });
+
+        // Resume button
+        document.getElementById('resume-btn').addEventListener('click', () => {
+            const subj = currentLang === 'zh'
+                ? encodeURIComponent("您好，我想索取您的完整履歷！")
+                : encodeURIComponent("Hi, I'd like to request your full resume!");
+            const body = currentLang === 'zh'
+                ? encodeURIComponent("您好，\n\n我看了您的作品集，非常感興趣。能否分享完整履歷？\n\n謝謝")
+                : encodeURIComponent("Hi,\n\nI loved your portfolio and would like to learn more. Could you share your resume?\n\nBest regards,");
+            window.location.href = `mailto:${DATA.email}?subject=${subj}&body=${body}`;
+        });
+
+        // Toast helper
+        function showToast(msg) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2800);
+        }
+
+        // Back to Top
+        backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Scroll fade-in
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+        function observeFadeIns() {
+            document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+        }
+
+        // =========================================================
+        // 🚀 INIT
+        // =========================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSocial();
+            renderAll();
+            observeFadeIns();
+        });
+    </script>
+
+</body>
+
+</html>
