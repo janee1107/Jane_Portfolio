@@ -516,7 +516,7 @@
 
   <script>
     // ─── PASSWORD (stored as SHA-256 hash — plaintext never in code) ──────────
-    const STORED_HASH = '3fbf83db53c7bbedc2df8301fdf7c7c97f621f48fa0960a8ad455d9bf6d03e9c';
+    const STORED_HASH = 'ca6dc0e0d09c62350695d56c8e5b9e2ca4a901ac0bc038048543caf87c360a84';
 
     async function hashString(str) {
       const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -685,32 +685,18 @@
           link: "https://www.facebook.com/share/p/16x4sNeocz/"
         },
         {
-          title: "FLOW — AI Conversational App",
-          role: { zh: "個人專案｜Product Designer & Developer", en: "Personal Project｜Product Designer & Developer" },
+          title: "Trip Assistant — AI Travel Companion",
+          role: { zh: "個人專案｜Vibe Coding Builder", en: "Personal Project｜Vibe Coding Builder" },
           company: "Personal",
           year: "2026",
           desc: {
-            zh: "AI 原生的 UX 體驗應該長什麼樣？這是我用來探索這個問題的個人專案——整合 Gemini API 實現對話式功能，從構想到部署全程獨立完成，React + TypeScript 全端開發。",
-            en: "What does AI-native UX actually feel like when you build it yourself? This is my answer — a personal app integrating Gemini API for conversational features, built independently from concept to Vercel deployment with React + TypeScript."
+            zh: "第一個 Vibe Coding 作品。不想同時開六個 app 做旅遊計畫——所以直接做了一個能串接出發、登機、入境所有節點的旅行小助手，把 6+ 個 app 縮減成一個入口。",
+            en: "My first Vibe Coding project. Tired of juggling 6+ apps for a single trip — so I built one that connects every node of the journey, from departure to boarding to arrival, into a single interface."
           },
-          tags: ["Gemini API", "React", "TypeScript", "Vibe Coding", "AI-native UX"],
+          tags: ["Vibe Coding", "Bolt", "AI-native UX", "Travel", "0-to-1"],
           isConfidential: false,
-          imageUrl: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1600&q=80",
-          link: "https://github.com/janee1107/FLOW"
-        },
-        {
-          title: "heart-home-finance",
-          role: { zh: "個人專案｜Product Designer & Developer", en: "Personal Project｜Product Designer & Developer" },
-          company: "Personal",
-          year: "2026",
-          desc: {
-            zh: "用 Lovable 建立的個人財務管理應用，React + TypeScript + Tailwind 技術棧。這是 FLOW 的前身迭代版本，也是我驗證「AI 輔助產品開發從構想到上線」全流程的實驗場。",
-            en: "A personal finance app built with Lovable — the prototype iteration before FLOW. Built to validate the full AI-assisted development pipeline, from idea to deployment, using React + TypeScript + Tailwind."
-          },
-          tags: ["Lovable", "React", "TypeScript", "Tailwind", "AI-assisted Dev"],
-          isConfidential: false,
-          imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80",
-          link: "https://github.com/janee1107/heart-home-finance"
+          imageUrl: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80",
+          link: "https://interactive-trip-iti-zooh.bolt.host/"
         }
       ],
 
@@ -949,12 +935,13 @@
       const L = DATA.labels[currentLang];
       const hash = await hashString(input);
       if (hash === STORED_HASH) {
+        const idx = pendingProjectIndex;
         closePwModal();
-        const p = DATA.projects[pendingProjectIndex];
+        const p = DATA.projects[idx];
         if (p.caseStudyUrl) {
           window.location.href = p.caseStudyUrl;
         } else {
-          showContentModal(pendingProjectIndex);
+          showContentModal(idx);
         }
       } else {
         const inputEl = document.getElementById('pw-input');
