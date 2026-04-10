@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh">
 
 <head>
@@ -221,19 +222,13 @@
     .nda-hint { font-size: 0.58rem; color: var(--c-gray-400); margin-top: 0.5rem; letter-spacing: 0.05em; opacity: 0; transition: opacity 0.3s; }
     .nda-wrap:hover .nda-hint { opacity: 1; }
 
-    /* Blurred image NDA — for projects with a public case study link */
-    .blurred-nda { display: block; text-decoration: none; }
-    .blurred-nda img { filter: blur(8px); transform: scale(1.12); transition: filter 0.4s; }
-    .blurred-nda:hover img { filter: blur(6px); }
-    .nda-lock-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.08); }
-    .project-cta {
-      display: inline-flex; align-items: center; gap: 4px;
-      margin-top: 1rem; font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.06em; color: var(--c-gray-900); text-decoration: none;
-      border-bottom: 1px solid var(--c-gray-300); padding-bottom: 1px;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .project-cta:hover { color: var(--c-gray-500); border-color: var(--c-gray-400); }
+    /* Blurred image NDA — password-protected card with cover image */
+    .nda-img-bg { position: absolute; inset: 0; }
+    .nda-img-bg img { width: 100%; height: 100%; object-fit: cover; filter: blur(10px); transform: scale(1.12); transition: filter 0.4s; }
+    .nda-wrap:hover .nda-img-bg img { filter: blur(8px); }
+    .nda-card--over-img { background: rgba(0,0,0,0.18); }
+    .nda-card--over-img::before { display: none; }
+    .nda-card--over-img .nda-inner { background: rgba(255,255,255,0.55); }
 
     .project-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
     .project-meta span { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-gray-500); font-weight: 500; }
@@ -630,8 +625,8 @@
           },
           tags: ["Vibe Coding", "AI Agent", "Global Campaign", "0-to-1", "PRD"],
           isConfidential: true,
-          imageUrl: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1600&q=80",
-          caseStudyLink: "gvh-case-study.html",
+          imageUrl: "https://images.unsplash.com/photo-1593113598332-cd288d649433?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80",
+          caseStudyUrl: "gvh-case-study.html",
           secretContent: {
             fullDesc: {
               zh: "接手一個卡在 Word 文件與繁複人工流程中的傳統 HR 計畫，從問題定義到政策改變，完整擁有產品生命週期。\n\n開發前先完整規劃跨三工具的端對端資料流（宣傳 → 報名 → 評審），以 Excel Master Plan 管理里程碑，定期向主管匯報進度。\n\n• Jarvis AI 代理：設計關鍵字引導對話流程，替代繁瑣申請表單；定義輸出格式與欄位結構，讓資料自動對應評審平台。處理時間從 90 分鐘縮短至 20 分鐘（↓77%），申請完成率顯著提升。\n\n• GVH 評審平台（Vibe Coding）：取代 ~300 份 Word 文件；7 位評審、40 份申請、加權排名、即時儀表板，全程無紙化。\n\n• GVH 活動網站（Vibe Coding）：聯發科 HR 史上首個 Vibe Coding 專案，成果直接推動全公司 Web 開發政策制定（與 IT 共同草擬）。帶領 40 位同仁完成 Vibe Coding 工作坊，建立可複製的組織 AI 能力模型。",
@@ -832,40 +827,31 @@
       const L = DATA.labels[currentLang];
       document.getElementById('projects-grid').innerHTML = DATA.projects.map((p, i) => {
         if (p.isConfidential) {
-          // Case study link present → blurred image + direct link (no password)
-          if (p.caseStudyLink) {
-            return `
-              <div class="project-card fade-in" style="transition-delay:${i*0.1}s">
-                <a href="${p.caseStudyLink}" class="project-img-wrap blurred-nda">
-                  <img src="${p.imageUrl}" alt="${p.title}" loading="lazy">
-                  <div class="nda-lock-overlay">
-                    <div class="nda-inner">
-                      ${Icons.lock}
-                      <span class="nda-title">${L.confidential}</span>
-                      <span class="nda-sub">${L.ndaSub}</span>
-                    </div>
-                  </div>
-                </a>
-                <div class="project-meta"><span>${p.year}</span><span class="dot"></span><span>${p.company}</span></div>
-                <h3 class="project-title serif">${p.title}</h3>
-                <p class="project-role">${t(p.role)}</p>
-                <p class="project-desc">${t(p.desc)}</p>
-                <div class="project-tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
-                <a href="${p.caseStudyLink}" class="project-cta">${L.viewCaseStudy} →</a>
-              </div>`;
-          }
-          // Default → password-protected NDA card
+          // Has cover image → blurred image with NDA lock, password-protected
+          const imgArea = p.imageUrl ? `
+            <div class="nda-img-bg">
+              <img src="${p.imageUrl}" alt="${p.title}" loading="lazy">
+            </div>
+            <div class="nda-card nda-card--over-img">
+              <div class="nda-inner">
+                ${Icons.lock}
+                <span class="nda-title">${L.confidential}</span>
+                <span class="nda-sub">${L.ndaSub}</span>
+                <span class="nda-hint">${L.ndaHint}</span>
+              </div>
+            </div>` : `
+            <div class="nda-card">
+              <div class="nda-inner">
+                ${Icons.lock}
+                <span class="nda-title">${L.confidential}</span>
+                <span class="nda-sub">${L.ndaSub}</span>
+                <span class="nda-hint">${L.ndaHint}</span>
+              </div>
+            </div>`;
           return `
             <div class="project-card fade-in" style="transition-delay:${i*0.1}s">
               <div class="nda-wrap" onclick="openPwModal(${i})" role="button" tabindex="0" aria-label="View confidential project: ${p.title}">
-                <div class="nda-card">
-                  <div class="nda-inner">
-                    ${Icons.lock}
-                    <span class="nda-title">${L.confidential}</span>
-                    <span class="nda-sub">${L.ndaSub}</span>
-                    <span class="nda-hint">${L.ndaHint}</span>
-                  </div>
-                </div>
+                ${imgArea}
               </div>
               <div class="project-meta"><span>${p.year}</span><span class="dot"></span><span>${p.company}</span></div>
               <h3 class="project-title serif">${p.title}</h3>
@@ -964,7 +950,12 @@
       const hash = await hashString(input);
       if (hash === STORED_HASH) {
         closePwModal();
-        showContentModal(pendingProjectIndex);
+        const p = DATA.projects[pendingProjectIndex];
+        if (p.caseStudyUrl) {
+          window.location.href = p.caseStudyUrl;
+        } else {
+          showContentModal(pendingProjectIndex);
+        }
       } else {
         const inputEl = document.getElementById('pw-input');
         document.getElementById('pw-error').textContent = L.pwError;
