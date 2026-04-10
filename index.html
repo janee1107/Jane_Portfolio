@@ -1,1920 +1,1085 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name — UI/UX Engineer</title>
-    <meta name="description"
-        content="UI/UX Engineer based in Taiwan. Bridging the gap between complex systems and serene human experiences.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Inter:wght@300;400;500&display=swap"
-        rel="stylesheet">
-    <style>
-        /* =============================================
-   🎨 DESIGN TOKENS
-   ============================================= */
-        :root {
-            --font-serif: 'Noto Serif TC', Georgia, serif;
-            --font-sans: 'Inter', system-ui, sans-serif;
-            --c-bg: #FAFAFA;
-            --c-white: #FFFFFF;
-            --c-gray-50: #F9FAFB;
-            --c-gray-100: #F3F4F6;
-            --c-gray-200: #E5E7EB;
-            --c-gray-300: #D1D5DB;
-            --c-gray-400: #9CA3AF;
-            --c-gray-500: #6B7280;
-            --c-gray-600: #4B5563;
-            --c-gray-700: #374151;
-            --c-gray-900: #111827;
-            --nav-height: 70px;
-            --transition: 0.5s cubic-bezier(0.87, 0, 0.13, 1);
-        }
-
-        /* ---- Reset ---- */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: var(--nav-height);
-        }
-
-        body {
-            font-family: var(--font-sans);
-            background: var(--c-bg);
-            color: var(--c-gray-900);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        button {
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-family: inherit;
-        }
-
-        img {
-            display: block;
-            max-width: 100%;
-        }
-
-        ::selection {
-            background: var(--c-gray-200);
-            color: var(--c-gray-900);
-        }
-
-        /* ---- Utilities ---- */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-        }
-
-        .upper {
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-        }
-
-        .serif {
-            font-family: var(--font-serif);
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(28px);
-            transition: opacity 0.9s ease-out, transform 0.9s ease-out;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* =============================================
-   🧭 NAVBAR
-   ============================================= */
-        #navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-            height: var(--nav-height);
-            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        #navbar.scrolled {
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
-        }
-
-        .nav-logo {
-            font-size: 0.7rem;
-            font-weight: 500;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--c-gray-500);
-            transition: color 0.3s;
-        }
-
-        #navbar.scrolled .nav-logo {
-            color: var(--c-gray-900);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            font-size: 0.65rem;
-            font-weight: 500;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            transition: color 0.3s;
-            padding: 4px 0;
-            position: relative;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--c-gray-900);
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--c-gray-900);
-        }
-
-        .nav-link.active::after,
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        .nav-hamburger {
-            display: none;
-            color: var(--c-gray-600);
-            padding: 4px;
-        }
-
-        .nav-hamburger svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 1.5;
-            fill: none;
-        }
-
-        /* Lang toggle */
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
-
-        #lang-toggle {
-            font-size: 0.65rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            padding: 4px 10px;
-            border: 1px solid var(--c-gray-200);
-            border-radius: 9999px;
-            transition: color 0.25s, border-color 0.25s, background 0.25s;
-        }
-
-        #lang-toggle:hover {
-            color: var(--c-gray-900);
-            border-color: var(--c-gray-400);
-            background: var(--c-gray-50);
-        }
-
-        /* ---- Mobile menu ---- */
-        #mobile-menu {
-            position: fixed;
-            inset: 0;
-            z-index: 200;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(20px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-
-        #mobile-menu.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .mobile-menu-close {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            color: var(--c-gray-400);
-            padding: 8px;
-        }
-
-        .mobile-menu-close svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            stroke-width: 1.5;
-            fill: none;
-        }
-
-        .mobile-nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        .mobile-nav-link {
-            font-family: var(--font-serif);
-            font-size: 1.8rem;
-            color: var(--c-gray-900);
-            transition: color 0.3s;
-        }
-
-        .mobile-nav-link:hover {
-            color: var(--c-gray-400);
-        }
-
-        /* =============================================
-   🏠 HERO
-   ============================================= */
-        #home {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0 1.5rem;
-            overflow: hidden;
-            background: var(--c-bg);
-        }
-
-        .hero-bg {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .hero-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            mix-blend-mode: multiply;
-            animation: blob-pulse 10s ease-in-out infinite;
-        }
-
-        .blob-1 {
-            top: -10%;
-            left: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: rgba(219, 234, 254, 0.5);
-        }
-
-        .blob-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 60vw;
-            height: 60vw;
-            background: rgba(255, 228, 230, 0.5);
-            animation-delay: -5s;
-            animation-direction: reverse;
-        }
-
-        .blob-3 {
-            top: 20%;
-            right: 10%;
-            width: 35vw;
-            height: 35vw;
-            background: rgba(204, 251, 241, 0.4);
-            animation-delay: -3s;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(2px);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 52rem;
-        }
-
-        .hero-eyebrow {
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            margin-bottom: 2rem;
-            animation: fadeInDown 1.2s ease-out 0.4s both;
-        }
-
-        .hero-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2.4rem, 6vw, 4.5rem);
-            color: var(--c-gray-900);
-            line-height: 1.12;
-            white-space: pre-line;
-            margin-bottom: 1.25rem;
-            animation: fadeInUp 1.2s ease-out 0.7s both;
-        }
-
-        .hero-zh {
-            font-size: clamp(0.85rem, 1.5vw, 1.1rem);
-            color: var(--c-gray-500);
-            font-weight: 300;
-            margin-bottom: 1rem;
-            animation: fadeInUp 1.2s ease-out 1s both;
-        }
-
-        .hero-sub {
-            font-size: clamp(0.75rem, 1.2vw, 0.9rem);
-            color: var(--c-gray-400);
-            max-width: 36rem;
-            margin: 0 auto 3rem;
-            animation: fadeInUp 1.2s ease-out 1.2s both;
-        }
-
-        .hero-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.9rem 2rem;
-            background: var(--c-gray-900);
-            color: #fff;
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            border-radius: 9999px;
-            overflow: hidden;
-            position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeIn 1.2s ease-out 1.5s both;
-        }
-
-        .hero-cta:hover {
-            transform: scale(1.04);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        }
-
-        .hero-cta svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
-            fill: none;
-            transition: transform 0.3s;
-        }
-
-        .hero-cta:hover svg {
-            transform: translateX(4px);
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            animation: fadeIn 1.2s ease-out 2.2s both;
-        }
-
-        .scroll-text {
-            font-size: 0.55rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-        }
-
-        .scroll-line {
-            width: 1px;
-            height: 48px;
-            background: var(--c-gray-200);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .scroll-line::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--c-gray-500);
-            animation: scroll-travel 2s ease-in-out infinite;
-        }
-
-        /* =============================================
-   🧠 ETHOS
-   ============================================= */
-        #ethos {
-            padding: 8rem 1.5rem;
-            background: var(--c-white);
-        }
-
-        .ethos-inner {
-            max-width: 72rem;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 4rem;
-        }
-
-        .section-eyebrow {
-            font-size: 0.65rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            margin-bottom: 2rem;
-        }
-
-        .ethos-quote {
-            font-family: var(--font-serif);
-            font-size: clamp(1.25rem, 2.5vw, 2rem);
-            color: var(--c-gray-900);
-            line-height: 1.7;
-            white-space: pre-line;
-            border-left: 2px solid var(--c-gray-100);
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .ethos-quote::before {
-            content: '';
-            position: absolute;
-            left: -1px;
-            top: 0;
-            width: 2px;
-            height: 3rem;
-            background: linear-gradient(to bottom, var(--c-gray-300), transparent);
-        }
-
-        .about-text {
-            color: var(--c-gray-500);
-            font-weight: 300;
-            line-height: 1.9;
-            font-size: 0.9rem;
-        }
-
-        .about-text p+p {
-            margin-top: 1.25rem;
-        }
-
-        .skills-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.65rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            margin-bottom: 1.25rem;
-            margin-top: 2.5rem;
-        }
-
-        .skills-label::before {
-            content: '';
-            display: block;
-            width: 12px;
-            height: 1px;
-            background: var(--c-gray-300);
-        }
-
-        .skills-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
-        /* Skill accordion */
-        .skill-item {
-            border: 1px solid var(--c-gray-100);
-            border-radius: 12px;
-            background: var(--c-white);
-            overflow: hidden;
-            transition: border-color 0.4s, box-shadow 0.4s;
-        }
-
-        .skill-item:hover {
-            border-color: var(--c-gray-200);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-        }
-
-        .skill-item.open {
-            border-color: var(--c-gray-200);
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 4px 20px rgba(0, 0, 0, 0.04);
-        }
-
-        .skill-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.1rem;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .skill-name {
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 500;
-            color: var(--c-gray-700);
-        }
-
-        .skill-chevron {
-            color: var(--c-gray-400);
-            transition: transform 0.2s ease-out;
-        }
-
-        .skill-chevron svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-            fill: none;
-        }
-
-        .skill-item.open .skill-chevron {
-            transform: rotate(180deg);
-        }
-
-        .skill-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.22s ease-out, opacity 0.18s ease;
-            opacity: 0;
-        }
-
-        .skill-item.open .skill-body {
-            max-height: 160px;
-            opacity: 1;
-        }
-
-        .skill-desc {
-            font-size: 0.78rem;
-            color: var(--c-gray-500);
-            font-weight: 300;
-            line-height: 1.75;
-            padding: 0 1.1rem 1rem;
-            border-left: 2px solid var(--c-gray-100);
-            margin-left: 1.1rem;
-        }
-
-        /* Philosophy */
-        .philosophy {
-            padding-top: 5rem;
-            margin-top: 5rem;
-            border-top: 1px solid var(--c-gray-100);
-        }
-
-        .philosophy-label {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .philosophy-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2.5rem;
-        }
-
-        .philosophy-item .phi-num {
-            font-size: 0.6rem;
-            font-family: monospace;
-            color: var(--c-gray-300);
-            margin-bottom: 0.75rem;
-            transition: color 0.3s;
-        }
-
-        .philosophy-item:hover .phi-num {
-            color: var(--c-gray-500);
-        }
-
-        .phi-title {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: var(--c-gray-900);
-            margin-bottom: 0.6rem;
-        }
-
-        .phi-desc {
-            font-size: 0.82rem;
-            color: var(--c-gray-500);
-            font-weight: 300;
-            line-height: 1.75;
-        }
-
-        /* =============================================
-   🖼 WORKS
-   ============================================= */
-        #works {
-            padding: 8rem 1.5rem;
-            background: #FCFCFC;
-            border-top: 1px solid var(--c-gray-100);
-        }
-
-        .works-inner {
-            max-width: 80rem;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .section-title {
-            font-family: var(--font-serif);
-            font-size: clamp(1.8rem, 4vw, 3rem);
-            color: var(--c-gray-900);
-            margin-top: 0.75rem;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 4rem;
-        }
-
-        .project-card {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .project-img-wrap {
-            position: relative;
-            overflow: hidden;
-            border-radius: 4px;
-            background: var(--c-gray-50);
-            aspect-ratio: 4/3;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            transition: box-shadow 0.5s ease;
-        }
-
-        .project-card:hover .project-img-wrap {
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
-        }
-
-        .project-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scale(1);
-            transition: transform 1s ease-out;
-        }
-
-        .project-card:hover .project-img-wrap img {
-            transform: scale(1.05);
-        }
-
-        .project-img-wrap .img-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0);
-            transition: background 0.4s;
-        }
-
-        .project-card:hover .img-overlay {
-            background: rgba(0, 0, 0, 0.04);
-        }
-
-        /* NDA card */
-        .nda-card {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--c-gray-100), var(--c-gray-200));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nda-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        }
-
-        .nda-inner svg {
-            width: 32px;
-            height: 32px;
-            stroke: var(--c-gray-400);
-            fill: none;
-            stroke-width: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .nda-title {
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--c-gray-500);
-            font-weight: 500;
-        }
-
-        .nda-sub {
-            font-size: 0.6rem;
-            color: var(--c-gray-400);
-            margin-top: 0.35rem;
-        }
-
-        /* NDA breathing animation */
-        .nda-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 60% 40%, rgba(180, 180, 200, 0.25), transparent 70%);
-            animation: blob-pulse 6s ease-in-out infinite;
-        }
-
-        .project-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.6rem;
-        }
-
-        .project-meta span {
-            font-size: 0.6rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--c-gray-500);
-            font-weight: 500;
-        }
-
-        .project-meta .dot {
-            width: 16px;
-            height: 1px;
-            background: var(--c-gray-300);
-        }
-
-        .project-title {
-            font-family: var(--font-serif);
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            color: var(--c-gray-900);
-            margin-bottom: 0.4rem;
-            transition: color 0.3s;
-        }
-
-        .project-card:hover .project-title {
-            color: var(--c-gray-600);
-        }
-
-        .project-role {
-            font-size: 0.8rem;
-            color: var(--c-gray-500);
-            font-weight: 300;
-            margin-bottom: 1rem;
-        }
-
-        .project-desc {
-            font-size: 0.82rem;
-            color: var(--c-gray-600);
-            line-height: 1.8;
-            margin-bottom: 1.25rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .project-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-        }
-
-        .tag {
-            font-size: 0.6rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            background: var(--c-gray-50);
-            padding: 3px 8px;
-            border-radius: 2px;
-        }
-
-        /* =============================================
-   📚 CURATION
-   ============================================= */
-        #curation {
-            padding: 6rem 1.5rem;
-            background: var(--c-white);
-            border-top: 1px solid var(--c-gray-50);
-        }
-
-        .curation-inner {
-            max-width: 72rem;
-            margin: 0 auto;
-        }
-
-        .curation-header {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            border-bottom: 1px solid var(--c-gray-100);
-            padding-bottom: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .curation-sub {
-            font-size: 0.75rem;
-            color: var(--c-gray-400);
-            font-weight: 300;
-            max-width: 22rem;
-        }
-
-        .inspiration-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.25rem;
-        }
-
-        .inspiration-card {
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem;
-            border-radius: 16px;
-            border: 1px solid var(--c-gray-100);
-            background: rgba(249, 250, 251, 0.5);
-            transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, transform 0.4s;
-        }
-
-        .inspiration-card:hover {
-            background: var(--c-white);
-            border-color: var(--c-gray-200);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-            transform: translateY(-2px);
-        }
-
-        .insp-cat {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.6rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-            margin-bottom: 1.25rem;
-            transition: color 0.3s;
-        }
-
-        .inspiration-card:hover .insp-cat {
-            color: var(--c-gray-700);
-        }
-
-        .insp-cat svg {
-            width: 15px;
-            height: 15px;
-            stroke: currentColor;
-            fill: none;
-        }
-
-        .insp-title {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--c-gray-900);
-            line-height: 1.55;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.4rem;
-            transition: color 0.3s;
-        }
-
-        .inspiration-card:hover .insp-title {
-            color: #2563EB;
-        }
-
-        .insp-arrow {
-            flex-shrink: 0;
-            margin-top: 2px;
-            opacity: 0;
-            transform: translate(-4px, 4px);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-
-        .insp-arrow svg {
-            width: 13px;
-            height: 13px;
-            stroke: currentColor;
-            fill: none;
-        }
-
-        .inspiration-card:hover .insp-arrow {
-            opacity: 1;
-            transform: translate(0, 0);
-        }
-
-        .insp-author {
-            font-size: 0.72rem;
-            color: var(--c-gray-500);
-            font-weight: 300;
-            margin-top: auto;
-            padding-top: 1rem;
-        }
-
-        /* =============================================
-   ✉️ CONTACT
-   ============================================= */
-        #contact {
-            padding: 8rem 1.5rem;
-            background: var(--c-bg);
-            border-top: 1px solid var(--c-gray-100);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-        }
-
-        .contact-title {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 5vw, 3.8rem);
-            color: var(--c-gray-900);
-            line-height: 1.2;
-            white-space: pre-line;
-            margin-bottom: 2.5rem;
-        }
-
-        .contact-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.85rem 1.75rem;
-            border-radius: 9999px;
-            border: 1px solid var(--c-gray-200);
-            background: var(--c-white);
-            color: var(--c-gray-900);
-            font-size: 0.7rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            font-weight: 500;
-            cursor: pointer;
-            margin-bottom: 3.5rem;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            transition: border-color 0.4s, box-shadow 0.4s, transform 0.3s;
-        }
-
-        .contact-cta:hover {
-            border-color: var(--c-gray-300);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
-            transform: translateY(-2px);
-        }
-
-        .contact-cta svg {
-            width: 16px;
-            height: 16px;
-            stroke: var(--c-gray-400);
-            fill: none;
-            transition: stroke 0.3s;
-        }
-
-        .contact-cta:hover svg {
-            stroke: var(--c-gray-900);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 2.5rem;
-            justify-content: center;
-        }
-
-        .social-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.65rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--c-gray-500);
-            transition: color 0.3s;
-        }
-
-        .social-link:hover {
-            color: var(--c-gray-900);
-        }
-
-        .social-link svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            fill: none;
-        }
-
-        .footer-copy {
-            margin-top: 5rem;
-            font-size: 0.6rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--c-gray-400);
-        }
-
-        /* ---- Toast ---- */
-        #toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: var(--c-gray-900);
-            color: #fff;
-            font-size: 0.7rem;
-            letter-spacing: 0.05em;
-            padding: 0.6rem 1.2rem;
-            border-radius: 9999px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s, transform 0.3s;
-            z-index: 999;
-            white-space: nowrap;
-        }
-
-        #toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ---- Back to Top ---- */
-        #back-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 1.5rem;
-            z-index: 80;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--c-white);
-            border: 1px solid var(--c-gray-200);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(8px);
-            transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
-        }
-
-        #back-top.show {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-
-        #back-top:hover {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        #back-top svg {
-            width: 16px;
-            height: 16px;
-            stroke: var(--c-gray-600);
-            fill: none;
-            stroke-width: 2;
-        }
-
-        /* =============================================
-   📱 RESPONSIVE
-   ============================================= */
-        @media (min-width: 768px) {
-            .ethos-inner {
-                grid-template-columns: 1fr 1fr;
-                column-gap: 5rem;
-            }
-
-            .ethos-right {
-                grid-row: 1;
-            }
-
-            .philosophy-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .projects-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 4rem 5rem;
-            }
-
-            .project-card:nth-child(even) {
-                margin-top: 5rem;
-            }
-
-            .project-img-wrap {
-                aspect-ratio: 3/4;
-            }
-
-            .inspiration-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .curation-header {
-                flex-direction: row;
-                align-items: flex-end;
-                justify-content: space-between;
-            }
-        }
-
-        /* =============================================
-   🎬 KEYFRAMES
-   ============================================= */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes blob-pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.08);
-            }
-        }
-
-        @keyframes scroll-travel {
-            0% {
-                transform: translateY(-100%);
-            }
-
-            60%,
-            100% {
-                transform: translateY(100%);
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jane Huang — Turning Complexity into Clarity</title>
+  <meta name="description" content="I turn complex organizational problems into AI tools, clear systems, and campaigns that move people to act. From Jarvis AI agents to global programs for 18,000+ employees.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       🎨 DESIGN TOKENS
+    ============================================= */
+    :root {
+      --font-serif: 'Noto Serif TC', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --c-bg: #FAFAFA;
+      --c-white: #FFFFFF;
+      --c-gray-50: #F9FAFB;
+      --c-gray-100: #F3F4F6;
+      --c-gray-200: #E5E7EB;
+      --c-gray-300: #D1D5DB;
+      --c-gray-400: #9CA3AF;
+      --c-gray-500: #6B7280;
+      --c-gray-600: #4B5563;
+      --c-gray-700: #374151;
+      --c-gray-900: #111827;
+      --nav-height: 70px;
+      --transition: 0.5s cubic-bezier(0.87, 0, 0.13, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height); }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--c-bg);
+      color: var(--c-gray-900);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    img { display: block; max-width: 100%; }
+    ::selection { background: var(--c-gray-200); color: var(--c-gray-900); }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    .upper { text-transform: uppercase; letter-spacing: 0.2em; }
+    .serif { font-family: var(--font-serif); }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* =============================================
+       🧭 NAVBAR
+    ============================================= */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem; height: var(--nav-height);
+      transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.03);
+    }
+    .nav-logo { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-gray-500); transition: color 0.3s; }
+    #navbar.scrolled .nav-logo { color: var(--c-gray-900); }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-gray-400); transition: color 0.3s; padding: 4px 0; position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--c-gray-900); transition: width 0.3s ease; }
+    .nav-link:hover, .nav-link.active { color: var(--c-gray-900); }
+    .nav-link.active::after, .nav-link:hover::after { width: 100%; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    #lang-toggle { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; color: var(--c-gray-400); transition: color 0.3s; padding: 4px 8px; border-radius: 4px; }
+    #lang-toggle:hover { color: var(--c-gray-900); background: var(--c-gray-100); }
+    .nav-hamburger { display: none; color: var(--c-gray-600); padding: 4px; }
+    .nav-hamburger svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+
+    /* Mobile menu */
+    #mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+    }
+    #mobile-menu.open { display: flex; animation: fadeInDown 0.3s ease; }
+    .mobile-menu-close { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--c-gray-500); }
+    .mobile-menu-close svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+    .mobile-nav-links { display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+    .mobile-nav-link { font-size: 1.1rem; font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-gray-700); transition: color 0.3s; }
+    .mobile-nav-link:hover { color: var(--c-gray-900); }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: block; }
+    }
+
+    /* =============================================
+       🏠 HERO
+    ============================================= */
+    #home {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: var(--nav-height) 1.5rem 4rem;
+    }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; }
+    .hero-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18; animation: blob-pulse 10s cubic-bezier(0.45,0.05,0.55,0.95) infinite; }
+    .blob-1 { width: 55vw; height: 55vw; background: #BFDBFE; top: -10%; left: -15%; animation-delay: 0s; }
+    .blob-2 { width: 40vw; height: 40vw; background: #FDE8D8; bottom: -5%; right: -10%; animation-delay: -4s; }
+    .blob-3 { width: 30vw; height: 30vw; background: #DDD6FE; top: 40%; left: 55%; animation-delay: -7s; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(250,250,250,0) 60%, var(--c-bg) 100%); }
+    .hero-content { position: relative; z-index: 1; max-width: 48rem; text-align: center; }
+    .hero-eyebrow { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--c-gray-400); margin-bottom: 1.25rem; animation: fadeInDown 0.8s ease both; }
+    .hero-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 7vw, 5rem); line-height: 1.15; color: var(--c-gray-900); margin-bottom: 1rem; animation: fadeInDown 0.9s ease 0.1s both; }
+    .hero-zh { font-size: clamp(0.85rem, 1.5vw, 1rem); color: var(--c-gray-500); font-weight: 300; margin-bottom: 1rem; letter-spacing: 0.04em; animation: fadeInDown 0.9s ease 0.18s both; }
+    .hero-sub { font-size: clamp(0.85rem, 1.5vw, 1rem); color: var(--c-gray-500); font-weight: 300; line-height: 1.8; white-space: pre-line; animation: fadeInDown 0.9s ease 0.22s both; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2.5rem;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--c-gray-900); border-bottom: 1px solid var(--c-gray-300); padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s; animation: fadeInDown 0.9s ease 0.3s both;
+    }
+    .hero-cta:hover { color: var(--c-gray-500); border-color: var(--c-gray-200); }
+    .hero-cta svg { width: 14px; height: 14px; stroke: currentColor; fill: none; transition: transform 0.3s; }
+    .hero-cta:hover svg { transform: translateX(3px); }
+    .scroll-indicator { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1; }
+    .scroll-text { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--c-gray-400); }
+    .scroll-line { width: 1px; height: 40px; background: var(--c-gray-300); overflow: hidden; position: relative; }
+    .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--c-gray-900); animation: scroll-travel 2s ease-in-out infinite; }
+
+    /* =============================================
+       🧠 ETHOS
+    ============================================= */
+    #ethos { padding: 7rem 1.5rem; background: var(--c-white); border-top: 1px solid var(--c-gray-50); }
+    .ethos-inner { max-width: 72rem; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    @media (max-width: 768px) { .ethos-inner { grid-template-columns: 1fr; gap: 3rem; } }
+    .section-eyebrow { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--c-gray-400); margin-bottom: 1.5rem; }
+    .ethos-quote { font-family: var(--font-serif); font-size: clamp(1.3rem, 2.5vw, 1.8rem); line-height: 1.6; color: var(--c-gray-900); font-weight: 300; }
+    .ethos-right { display: flex; flex-direction: column; gap: 2.5rem; }
+    .about-text { display: flex; flex-direction: column; gap: 1rem; }
+    .about-text p { font-size: 0.9rem; color: var(--c-gray-600); line-height: 1.9; font-weight: 300; }
+    .skills-label { font-size: 0.6rem; color: var(--c-gray-400); margin-bottom: 0.75rem; }
+    .skills-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--c-gray-100); }
+    .skill-item { border-bottom: 1px solid var(--c-gray-100); }
+    .skill-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; text-align: left; }
+    .skill-name { font-size: 0.82rem; font-weight: 500; color: var(--c-gray-700); transition: color 0.3s; }
+    .skill-header:hover .skill-name { color: var(--c-gray-900); }
+    .skill-chevron svg { width: 16px; height: 16px; stroke: var(--c-gray-400); fill: none; transition: transform 0.35s ease; }
+    .skill-item.open .skill-chevron svg { transform: rotate(180deg); }
+    .skill-body { overflow: hidden; max-height: 0; transition: max-height 0.4s ease; }
+    .skill-item.open .skill-body { max-height: 200px; }
+    .skill-desc { font-size: 0.8rem; color: var(--c-gray-500); line-height: 1.8; padding: 0 0 1rem; font-weight: 300; }
+    .philosophy { padding-top: 3rem; border-top: 1px solid var(--c-gray-100); }
+    .philosophy-label { margin-bottom: 2rem; }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    @media (max-width: 768px) { .philosophy-grid { grid-template-columns: 1fr; } }
+    .philosophy-item { display: flex; flex-direction: column; gap: 0.6rem; }
+    .phi-num { font-size: 0.6rem; color: var(--c-gray-400); letter-spacing: 0.1em; }
+    .phi-title { font-size: 0.9rem; font-weight: 500; color: var(--c-gray-900); }
+    .phi-desc { font-size: 0.8rem; color: var(--c-gray-500); line-height: 1.8; font-weight: 300; }
+
+    /* =============================================
+       🖼 WORKS
+    ============================================= */
+    #works { padding: 7rem 1.5rem; background: var(--c-bg); border-top: 1px solid var(--c-gray-50); }
+    .works-inner { max-width: 72rem; margin: 0 auto; }
+    .section-header { margin-bottom: 4rem; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--c-gray-900); margin-top: 0.5rem; }
+    .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4rem 3rem; }
+    @media (max-width: 768px) { .projects-grid { grid-template-columns: 1fr; gap: 3rem; } }
+
+    .project-card { display: flex; flex-direction: column; }
+    .project-img-wrap {
+      position: relative; overflow: hidden; border-radius: 4px;
+      background: var(--c-gray-50); aspect-ratio: 4/3; margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: box-shadow 0.5s ease;
+    }
+    .project-card:hover .project-img-wrap { box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+    .project-img-wrap img { width: 100%; height: 100%; object-fit: cover; transform: scale(1); transition: transform 1s ease-out; }
+    .project-card:hover .project-img-wrap img { transform: scale(1.05); }
+    .img-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.4s; }
+    .project-card:hover .img-overlay { background: rgba(0,0,0,0.04); }
+
+    /* Confidential card — clickable */
+    .nda-wrap {
+      position: relative; overflow: hidden; border-radius: 4px;
+      aspect-ratio: 4/3; margin-bottom: 1.5rem;
+      cursor: pointer; transition: box-shadow 0.5s ease;
+    }
+    .nda-wrap:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+    .nda-card {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--c-gray-100), var(--c-gray-200));
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.4s;
+    }
+    .nda-wrap:hover .nda-card { background: linear-gradient(135deg, var(--c-gray-200), var(--c-gray-300)); }
+    .nda-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(180,180,200,0.25), transparent 70%);
+      animation: blob-pulse 6s ease-in-out infinite;
+    }
+    .nda-inner {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem; text-align: center;
+      background: rgba(255,255,255,0.5); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.7); border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04); position: relative; z-index: 1;
+    }
+    .nda-inner svg { width: 32px; height: 32px; stroke: var(--c-gray-400); fill: none; stroke-width: 1.5; margin-bottom: 1rem; }
+    .nda-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-gray-500); font-weight: 500; }
+    .nda-sub { font-size: 0.6rem; color: var(--c-gray-400); margin-top: 0.35rem; }
+    .nda-hint { font-size: 0.58rem; color: var(--c-gray-400); margin-top: 0.5rem; letter-spacing: 0.05em; opacity: 0; transition: opacity 0.3s; }
+    .nda-wrap:hover .nda-hint { opacity: 1; }
+
+    /* Blurred image NDA — for projects with a public case study link */
+    .blurred-nda { display: block; text-decoration: none; }
+    .blurred-nda img { filter: blur(8px); transform: scale(1.12); transition: filter 0.4s; }
+    .blurred-nda:hover img { filter: blur(6px); }
+    .nda-lock-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.08); }
+    .project-cta {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 1rem; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.06em; color: var(--c-gray-900); text-decoration: none;
+      border-bottom: 1px solid var(--c-gray-300); padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .project-cta:hover { color: var(--c-gray-500); border-color: var(--c-gray-400); }
+
+    .project-meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+    .project-meta span { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-gray-500); font-weight: 500; }
+    .project-meta .dot { width: 16px; height: 1px; background: var(--c-gray-300); }
+    .project-title { font-family: var(--font-serif); font-size: clamp(1.1rem, 2vw, 1.5rem); color: var(--c-gray-900); margin-bottom: 0.4rem; transition: color 0.3s; }
+    .project-card:hover .project-title { color: var(--c-gray-600); }
+    .project-role { font-size: 0.8rem; color: var(--c-gray-500); font-weight: 300; margin-bottom: 1rem; }
+    .project-desc { font-size: 0.82rem; color: var(--c-gray-600); line-height: 1.8; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-gray-400); background: var(--c-gray-50); padding: 3px 8px; border-radius: 2px; }
+
+    /* =============================================
+       📚 CURATION
+    ============================================= */
+    #curation { padding: 6rem 1.5rem; background: var(--c-white); border-top: 1px solid var(--c-gray-50); }
+    .curation-inner { max-width: 72rem; margin: 0 auto; }
+    .curation-header { display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid var(--c-gray-100); padding-bottom: 2rem; margin-bottom: 3rem; }
+    .curation-sub { font-size: 0.75rem; color: var(--c-gray-400); font-weight: 300; max-width: 22rem; }
+    .inspiration-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+    @media (max-width: 768px) { .inspiration-grid { grid-template-columns: 1fr; } }
+    .inspiration-card { display: flex; flex-direction: column; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--c-gray-100); background: rgba(249,250,251,0.5); transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, transform 0.4s; }
+    .inspiration-card:hover { background: var(--c-white); border-color: var(--c-gray-200); box-shadow: 0 8px 30px rgba(0,0,0,0.04); transform: translateY(-2px); }
+    .insp-cat { display: flex; align-items: center; gap: 0.5rem; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-gray-400); margin-bottom: 1.25rem; transition: color 0.3s; }
+    .inspiration-card:hover .insp-cat { color: var(--c-gray-700); }
+    .insp-cat svg { width: 15px; height: 15px; stroke: currentColor; fill: none; }
+    .insp-title { font-size: 0.85rem; font-weight: 500; color: var(--c-gray-900); line-height: 1.55; display: flex; align-items: flex-start; gap: 0.4rem; transition: color 0.3s; }
+    .inspiration-card:hover .insp-title { color: #2563EB; }
+    .insp-arrow { flex-shrink: 0; margin-top: 2px; opacity: 0; transform: translate(-4px,4px); transition: opacity 0.3s, transform 0.3s; }
+    .insp-arrow svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+    .inspiration-card:hover .insp-arrow { opacity: 1; transform: translate(0,0); }
+    .insp-author { font-size: 0.72rem; color: var(--c-gray-500); font-weight: 300; margin-top: auto; padding-top: 1rem; }
+
+    /* =============================================
+       ✉️ CONTACT
+    ============================================= */
+    #contact { padding: 8rem 1.5rem; background: var(--c-bg); border-top: 1px solid var(--c-gray-100); display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+    .contact-title { font-family: var(--font-serif); font-size: clamp(2rem,5vw,3.8rem); color: var(--c-gray-900); line-height: 1.2; white-space: pre-line; margin-bottom: 2.5rem; }
+    .contact-cta { display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; border: 1px solid var(--c-gray-300); border-radius: 2px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-gray-700); transition: all 0.3s; }
+    .contact-cta:hover { background: var(--c-gray-900); color: var(--c-white); border-color: var(--c-gray-900); }
+    .contact-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+    .social-links { display: flex; align-items: center; gap: 1.5rem; margin-top: 2.5rem; }
+    .social-link { display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--c-gray-500); transition: color 0.3s; letter-spacing: 0.08em; }
+    .social-link:hover { color: var(--c-gray-900); }
+    .social-link svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+    .footer-copy { font-size: 0.65rem; color: var(--c-gray-400); margin-top: 3rem; letter-spacing: 0.08em; }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(8px); background: var(--c-gray-900); color: var(--c-white); font-size: 0.75rem; padding: 0.75rem 1.5rem; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; z-index: 300; letter-spacing: 0.05em; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Back to top */
+    #back-top { position: fixed; bottom: 2rem; right: 2rem; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--c-gray-200); background: var(--c-white); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s, background 0.3s; z-index: 50; }
+    #back-top.show { opacity: 1; pointer-events: auto; }
+    #back-top:hover { background: var(--c-gray-900); border-color: var(--c-gray-900); }
+    #back-top:hover svg { stroke: var(--c-white); }
+    #back-top svg { width: 16px; height: 16px; stroke: var(--c-gray-500); fill: none; stroke-width: 2; }
+
+    /* =============================================
+       🔒 PASSWORD MODAL
+    ============================================= */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 400;
+      background: rgba(17,24,39,0.6); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; animation: fadeInModal 0.25s ease; }
+
+    @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-box {
+      background: var(--c-white); border-radius: 12px;
+      padding: 2.5rem; max-width: 420px; width: 100%;
+      position: relative; box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+      animation: slideUpModal 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .modal-box--wide { max-width: 680px; padding: 3rem; overflow-y: auto; max-height: 90vh; }
+
+    @keyframes slideUpModal { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+
+    .modal-close {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--c-gray-400); font-size: 1.1rem; line-height: 1;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-close:hover { background: var(--c-gray-100); color: var(--c-gray-700); }
+
+    .modal-lock { width: 40px; height: 40px; background: var(--c-gray-100); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+    .modal-lock svg { width: 20px; height: 20px; stroke: var(--c-gray-500); fill: none; stroke-width: 1.5; }
+
+    .modal-title { font-family: var(--font-serif); font-size: 1.2rem; color: var(--c-gray-900); margin-bottom: 0.5rem; }
+    .modal-hint { font-size: 0.78rem; color: var(--c-gray-500); line-height: 1.7; margin-bottom: 1.75rem; }
+
+    .pw-input-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .pw-input-row input {
+      flex: 1; padding: 0.65rem 0.9rem; font-size: 0.82rem; font-family: var(--font-sans);
+      border: 1px solid var(--c-gray-200); border-radius: 6px; outline: none;
+      transition: border-color 0.2s; color: var(--c-gray-900); background: var(--c-gray-50);
+    }
+    .pw-input-row input:focus { border-color: var(--c-gray-400); background: var(--c-white); }
+    .pw-input-row input.shake { animation: shake 0.4s ease; }
+    .pw-submit-btn {
+      padding: 0.65rem 1.1rem; background: var(--c-gray-900); color: var(--c-white);
+      border-radius: 6px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em;
+      transition: background 0.2s;
+    }
+    .pw-submit-btn:hover { background: var(--c-gray-700); }
+    .pw-error { font-size: 0.72rem; color: #DC2626; height: 1rem; }
+
+    /* Content modal body */
+    .cm-header { margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--c-gray-100); }
+    .cm-eyebrow { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-gray-400); margin-bottom: 0.5rem; }
+    .cm-title { font-family: var(--font-serif); font-size: clamp(1.3rem,3vw,1.8rem); color: var(--c-gray-900); margin-bottom: 0.3rem; }
+    .cm-role { font-size: 0.8rem; color: var(--c-gray-500); font-weight: 300; }
+    .cm-desc { font-size: 0.85rem; color: var(--c-gray-600); line-height: 1.9; margin-bottom: 1.5rem; white-space: pre-line; }
+    .cm-highlights { display: grid; grid-template-columns: repeat(2,1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    @media (max-width: 480px) { .cm-highlights { grid-template-columns: 1fr; } }
+    .cm-highlight { background: var(--c-gray-50); border-radius: 8px; padding: 0.9rem 1rem; }
+    .cm-hl-value { font-size: 1.1rem; font-weight: 600; color: var(--c-gray-900); margin-bottom: 0.2rem; }
+    .cm-hl-label { font-size: 0.7rem; color: var(--c-gray-500); letter-spacing: 0.05em; }
+    .cm-links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .cm-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 500; color: var(--c-gray-700); border: 1px solid var(--c-gray-200); border-radius: 4px; padding: 0.4rem 0.8rem; transition: all 0.2s; }
+    .cm-link:hover { background: var(--c-gray-900); color: var(--c-white); border-color: var(--c-gray-900); }
+    .cm-link svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+    .cm-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--c-gray-100); }
+
+    /* =============================================
+       🎞 KEYFRAMES
+    ============================================= */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes blob-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    @keyframes scroll-travel { 0% { transform: translateY(-100%); } 60%,100% { transform: translateY(100%); } }
+  </style>
 </head>
 
 <body>
 
-    <!-- ==============================
-     🧭 NAVBAR
-     ============================== -->
-    <nav id="navbar">
-        <button class="nav-logo" id="nav-logo">Your Name</button>
-        <div class="nav-links" id="nav-links">
-            <a class="nav-link" href="#ethos" data-section="ethos">Ethos</a>
-            <a class="nav-link" href="#works" data-section="works">Works</a>
-            <a class="nav-link" href="#curation" data-section="curation">Curation</a>
-            <a class="nav-link" href="#contact" data-section="contact">Contact</a>
-        </div>
-        <div class="nav-right">
-            <button id="lang-toggle" aria-label="Switch language">EN</button>
-            <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
-                <svg viewBox="0 0 24 24">
-                    <line x1="3" y1="8" x2="21" y2="8" />
-                    <line x1="3" y1="16" x2="21" y2="16" />
-                </svg>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
-        <button class="mobile-menu-close" id="mobile-close" aria-label="Close menu">
-            <svg viewBox="0 0 24 24">
-                <line x1="5" y1="5" x2="19" y2="19" />
-                <line x1="19" y1="5" x2="5" y2="19" />
-            </svg>
-        </button>
-        <nav class="mobile-nav-links">
-            <a class="mobile-nav-link" href="#home">Home</a>
-            <a class="mobile-nav-link" href="#ethos">Ethos</a>
-            <a class="mobile-nav-link" href="#works">Works</a>
-            <a class="mobile-nav-link" href="#curation">Curation</a>
-            <a class="mobile-nav-link" href="#contact">Contact</a>
-        </nav>
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <button class="nav-logo" id="nav-logo">Jane Huang</button>
+    <div class="nav-links" id="nav-links">
+      <a class="nav-link" href="#ethos" data-section="ethos">Ethos</a>
+      <a class="nav-link" href="#works" data-section="works">Works</a>
+      <a class="nav-link" href="#curation" data-section="curation">Curation</a>
+      <a class="nav-link" href="#contact" data-section="contact">Contact</a>
     </div>
-
-    <!-- ==============================
-     🏠 HERO
-     ============================== -->
-    <section id="home">
-        <div class="hero-bg">
-            <div class="hero-blob blob-1"></div>
-            <div class="hero-blob blob-2"></div>
-            <div class="hero-blob blob-3"></div>
-            <div class="hero-overlay"></div>
-        </div>
-        <div class="hero-content">
-            <p class="hero-eyebrow" id="hero-name">Your Name</p>
-            <h1 class="hero-title serif" id="hero-headline">Engineering the Invisible.
-                Designing the Poetic.</h1>
-            <p class="hero-zh" id="hero-zh">以程式構築隱形邏輯，以設計刻畫可見詩意。</p>
-            <p class="hero-sub" id="hero-sub">UI/UX Engineer based in Taiwan. Bridging the gap between complex systems
-                and serene human experiences.</p>
-            <a href="#ethos" class="hero-cta" id="hero-cta">
-                閱讀我的故事
-                <svg viewBox="0 0 24 24" stroke-width="2">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12,5 19,12 12,19" />
-                </svg>
-            </a>
-        </div>
-        <div class="scroll-indicator">
-            <span id="scroll-text" class="scroll-text">Scroll</span>
-            <div class="scroll-line"></div>
-        </div>
-    </section>
-
-    <!-- ==============================
-     🧠 ETHOS
-     ============================== -->
-    <section id="ethos">
-        <div class="ethos-inner">
-            <!-- Left: Quote -->
-            <div class="fade-in">
-                <p id="ethos-eyebrow" class="section-eyebrow upper">The Ethos</p>
-                <blockquote id="ethos-quote" class="ethos-quote serif">真正的科技，是隱形的。
-                    它不喧賓奪主，而是如同早晨的微光，靜靜地照亮使用者的意圖。</blockquote>
-            </div>
-
-            <!-- Right: About + Skills -->
-            <div class="fade-in ethos-right" style="transition-delay:0.12s">
-                <div id="about-text" class="about-text">
-                    <p>身為一位深諳 Apple 設計哲學的 UI/UX
-                        工程師，我相信最極致的使用者體驗，源自於對細節近乎苛求的堅持。我的工作不僅僅是畫出美觀的介面或是寫出高效的元件，更是要在「機器邏輯」與「人類情感」之間，搭建一座優雅的橋樑。</p>
-                    <p>在過去的經驗中，無論是在聯發科技處理極度複雜的底層系統視覺化，或是在快節奏的新創環境中打造從零到一的產品，我始終致力於讓每一次的點擊、每一次的滑動，都如同閱讀一本好書般流暢且沉浸。</p>
-                </div>
-
-                <p id="competencies-label" class="skills-label upper"><span>Core Competencies</span></p>
-                <div class="skills-list" id="skills-list">
-                    <!-- JS renders skill accordion items here -->
-                </div>
-            </div>
-
-            <!-- Philosophy — spans full width -->
-            <div class="philosophy fade-in" style="grid-column:1/-1; transition-delay:0.2s">
-                <p id="philosophy-label" class="section-eyebrow upper philosophy-label">Design Philosophy</p>
-                <div class="philosophy-grid" id="philosophy-grid">
-                    <!-- JS renders philosophy items here -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==============================
-     🖼 WORKS
-     ============================== -->
-    <section id="works">
-        <div class="works-inner">
-            <div class="section-header fade-in">
-                <p id="artifacts-eyebrow" class="section-eyebrow upper">The Artifacts</p>
-                <h2 id="selected-works" class="section-title serif">Selected Works</h2>
-            </div>
-            <div class="projects-grid" id="projects-grid">
-                <!-- JS renders project cards here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ==============================
-     📚 CURATION
-     ============================== -->
-    <section id="curation">
-        <div class="curation-inner fade-in">
-            <div class="curation-header">
-                <div>
-                    <p id="curation-eyebrow" class="section-eyebrow upper">Curation</p>
-                    <h2 id="inspired-title" class="section-title serif" style="font-size:clamp(1.4rem,2.5vw,1.8rem)">
-                        Currently Inspired By</h2>
-                </div>
-                <p id="curation-sub" class="curation-sub">A small digital library of thoughts, books, and resources
-                    shaping my perspective.</p>
-            </div>
-            <div class="inspiration-grid" id="inspiration-grid">
-                <!-- JS renders inspiration cards here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ==============================
-     ✉️ CONTACT
-     ============================== -->
-    <section id="contact">
-        <div class="fade-in" style="max-width:40rem;width:100%;">
-            <p id="epilogue-eyebrow" class="section-eyebrow upper" style="margin-bottom:2rem">The Epilogue</p>
-            <h2 id="contact-title" class="contact-title serif">Let's create something
-                meaningful together.</h2>
-
-            <!-- 💡 維護：修改下方的 data-email 為你的 email -->
-            <button class="contact-cta" id="resume-btn">
-                <svg viewBox="0 0 24 24" stroke-width="1.5">
-                    <rect x="3" y="5" width="18" height="14" rx="2" />
-                    <polyline points="3,5 12,13 21,5" />
-                </svg>
-                <span id="resume-btn-text">Request Full Resume</span>
-            </button>
-
-            <div class="social-links" id="social-links">
-                <!-- JS renders social links here -->
-            </div>
-            <p class="footer-copy" id="footer-copy"></p>
-        </div>
-    </section>
-
-    <!-- Toast notification -->
-    <div id="toast" role="status" aria-live="polite"></div>
-
-    <!-- Back to Top -->
-    <button id="back-top" aria-label="Back to top">
-        <svg viewBox="0 0 24 24">
-            <polyline points="18,15 12,9 6,15" />
-        </svg>
-    </button>
-
-    <!-- ==============================
-     ⚙️ JAVASCRIPT
-     ============================== -->
-    <script>
-        // =========================================================
-        // ✏️  維護區：修改這裡的資料，網站自動更新
-        // 語言切換：zh = 中文（預設），en = 英文
-        // =========================================================
-        let currentLang = 'zh';
-
-        const DATA = {
-            name: "Jane Huang",
-            email: "janee110781@gmail.com",
-
-            // 雙語內容：zh = 中文, en = 英文
-            hero: {
-                headline: {
-                    zh: "The Strategic Storyteller.",
-                    en: "The Strategic Storyteller."
-                },
-               subZh: "A journalist's instinct. A strategist's execution. A technologist's toolkit.\n\nFusing empathy with AI to turn human needs into elegant solutions.",
-                sub: {
-                    zh: "A journalist's instinct. A strategist's execution. A technologist's toolkit.\n\nFusing empathy with AI to turn human needs into elegant solutions.",
-                    en: "A journalist's instinct. A strategist's execution. A technologist's toolkit.\n\nFusing empathy with AI to turn human needs into elegant solutions."
-                },
-                cta: { zh: "了解更多", en: "Read My Story" }
-            },
-
-            ethos: {
-                quote: {
-                    zh: "「真正的影響力，不是自己站在聚光燈下，而在於為別人把前方的路點亮。」",
-                    en: "\"True impact is not standing in the light, but illuminating the path for others.\""
-                },
-                about: {
-                    zh: [
-                        "從記者時代透過報導傳遞議題，到後來投入企業溝通、推動雇主品牌與內部 DEI 倡議，籌劃多場百人規模活動，甚至近期捲起起袖子用 Vibe Coding 開發內部系統。表面上，我的職涯經歷了巨大的跨界；但對我來說，這一切的出發點始終只有一個：支持他人的成功。",
-                        "我看見組織裡的需求與痛點，然後選擇用最適合的工具去管理障礙。我的成就感不在於站在聚光燈下，而是來自於看見合作夥伴與利害關係人，因為我設計的系統與內容，能夠更有效率地達成他們的目標。"
-                    ],
-                    en: [
-                        "From highlighting critical issues as a journalist to driving corporate communications, employer branding, and internal DEI initiatives—including curating large-scale events for hundreds of participants—and even rolling up my sleeves to build internal systems via Vibe Coding. On the surface, my career might look like a series of major pivots. But at its core, everything I do is driven by one single motive: supporting the success of others.",
-                        "I observe the needs and pain points within an organization and select the right tools to manage those obstacles. My greatest fulfillment doesn't come from standing in the spotlight, but from watching my partners and stakeholders reach their goals more efficiently because of the systems and content I've designed."
-                    ]
-                }
-            },
-
-            skills: [
-                {
-                    name: "AI & System Building",
-                    desc: {
-                        zh: "為了讓跨部門夥伴能更輕鬆地達成目標，我主動運用 Vibe Coding 與 AI 工具，開發專屬的自動化流程與一站式網站，消彌繁紊的行政摩擦力。",
-                        en: "Driven by a desire to make my colleagues' lives easier, I proactively use Vibe Coding and AI tools to build automated workflows and one-stop platforms, eliminating administrative friction."
-                    }
-                },
-                {
-                    name: "Organizational Facilitation",
-                    desc: {
-                        zh: "深知複雜環境中人與人的溝通痛點，我從零打造內部 I-Connect ERG，並親自擔任工作坊的 Facilitator，為不同世代與部門創造能安心對話的空間。",
-                        en: "Understanding the communication pain points in complex environments, I built I-Connect ERG from scratch and facilitated workshops, creating psychologically safe spaces for dialogue across generations."
-                    }
-                },
-                {
-                    name: "Strategic Storytelling",
-                    desc: {
-                        zh: "結合記者時期的敏銃度，我擅長將硬核的研發成果轉譯為動人故事，協助團隊拿下國家級大獎，也為經營層設計溝通策略，讓他們的影響力自然發酵。",
-                        en: "Combining my journalistic instinct, I translate hardcore R&D achievements into compelling stories that win national awards, and design communication strategies that help leadership amplify their impact."
-                    }
-                },
-                {
-                    name: "Global Project Governance",
-                    desc: {
-                        zh: "擁有操盤 1.8 萬人全球專案的經驗，我能將原本依賴外部顧問的複雜流程徐底內製化，建立清晰的 SOP，讓庞大的跨國協作變得井然有序。",
-                        en: "With experience orchestrating global projects for 18,000+ employees, I internalize complex processes and build clear SOPs, bringing order and efficiency to massive cross-border collaborations."
-                    }
-                }
-            ],
-
-            philosophy: [
-                {
-                    title: "Empathy as the Architecture",
-                    desc: {
-                        zh: "先看見人的痛點，再動手設計系統。無論是寫一段文案或是一行程式碼，所有的解方都必須建立在「讓人更好過」的同理心之上。",
-                        en: "See the human pain points first, then design the system. Whether crafting a narrative or writing a line of code, every solution must be built on the empathy of making things easier for others."
-                    }
-                },
-                {
-                    title: "Automate the Chaos",
-                    desc: {
-                        zh: "組織裡的混亂是必然，但我選擇用系統來梳理。善用 AI 與科技工具把行政壁壘轉化為順暢的體驗，把時間還給真正有價値的交流。",
-                        en: "Chaos in an organization is inevitable, but I choose to resolve it with systems. I leverage AI to turn administrative barriers into seamless experiences, returning time to meaningful connections."
-                    }
-                },
-                {
-                    title: "Supporting Others' Success",
-                    desc: {
-                        zh: "最好的設計是隱形的。我的成就感不來自於個人的光環，而是來自於看見合作帥伴因為我提供的工具與敘述，能夠更從容地達成他們的目標。",
-                        en: "The best designs are invisible. My fulfillment comes not from personal accolades, but from seeing stakeholders achieve their goals more gracefully using the tools and narratives I provide."
-                    }
-                }
-            ],
-
-            // 💡 專案：將 isConfidential 設為 true 啟用 NDA 模式
-            projects: [
-                {
-                    title: "2026 Global Volunteer Hero Recognition",
-                    role: {
-                        zh: "全球傑出志工英雄榮耀獎項設計與與 AI 系統導入",
-                        en: "Project Lead & AI System Implementer"
-                    },
-                    company: "聯發科技 MediaTek",
-                    year: "2026",
-                    desc: {
-                        zh: "首創將 AI 技術深度融入全球性志工表揚專案。運用 Vibe Coding 打造專屬活動網站，並導入「Jarvis」 AI 報名助理，活動觸及1.8萬名員工，大幅降低員工的參與門檻。同時規劃 AI 工具流程，建立起未來可擴充複製的組織數位營運架構。",
-                        en: "Pioneered the deep integration of AI into a global volunteer recognition initiative spanning 18,000+ employees. Built a campaign website via Vibe Coding and introduced 'Jarvis,' an AI agent to guide registration. Architected an AI-assisted scoring system, laying the foundation for a scalable, replicable digital operations framework."
-                    },
-                    tags: ["Vibe Coding", "AI Agent", "Global Campaign", "0-to-1"],
-                    isConfidential: true,
-                    imageUrl: "",
-                    link: "#"
-                },
-                {
-                    title: "2025 Global Employee Survey",
-                    role: {
-                        zh: "全球員工意見調查專案經理與內容策略師",
-                        en: "Global Employee Survey Project Manager & Content Strategist"
-                    },
-                    company: "聯發科技 MediaTek",
-                    year: "2025",
-                    desc: {
-                        zh: "將高度依賴外部顧問、耗費龐大資源的全球員工意見調查專案，從 0 到 1 建立完整 SOP、主導問卷設計，並產製具識別度的全球化宣傳敘述。成功操盤橫跨 10+ 個據點、1.8 萬名員工的大型年度調查。",
-                        en: "Internalized a massive annual global project previously managed by external consultants, from 0 to 1. Built comprehensive SOPs, led questionnaire design, and produced all global promotional content. Successfully orchestrated the survey for 18,000+ employees across 10+ locations — significantly reducing consulting costs."
-                    },
-                    tags: ["0-to-1 Execution", "Content Strategy", "Global Comms", "SOP Design"],
-                    isConfidential: true,
-                    imageUrl: "",
-                    link: "#"
-                },
-                {
-                    title: "I-Connect ERG",
-                    role: {
-                        zh: "跨世代員工資源團體發起人與活動統籌",
-                        en: "Founder & Project Lead"
-                    },
-                    company: "聯發科技 MediaTek",
-                    year: "2024",
-                    desc: {
-                        zh: "致力打破跨世代與跨部門的交流壁壘，從零打造 I-Connect 社群。親自策劃並執行超過 5 場百人規模的大型倡議活動。擔任「跨世代使用說明書」等 Workshop 的引導者，在高度理性的工程師文化中，成功創造出具有心理安全感的真實對話空間。",
-                        en: "Built the I-Connect ERG from scratch to dismantle intergenerational and cross-departmental barriers. Curated and executed 5+ large-scale advocacy events for 100+ attendees. Served as lead facilitator for workshops like the 'Cross-Generational User Manual,' creating psychologically safe dialogue spaces within a highly rational engineering culture."
-                    },
-                    tags: ["Workshop Design", "Facilitation", "DEI", "Org Culture"],
-                    isConfidential: false,
-                    imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80",
-                    link: "https://www.facebook.com/share/p/16x4sNeocz/"
-                }
-            ],
-
-            // 💡 靈感書房
-            inspirations: [
-                {
-                    category: { zh: "閱讀", en: "Reading" },
-                    icon: "book",
-                    title: { zh: "《鯨》(The Whale)", en: "The Whale" },
-                    author: {
-                        zh: "生命是荒涼而美麗的敘事，悲劇的發生毫無意義，我們唯一能做的是擁抱當下。",
-                        en: "Life is a desolate yet beautiful narrative. Tragedies occur without reason; all we can do is embrace the present."
-                    },
-                    link: "https://thebookerprizes.com/the-booker-library/books/whale"
-                },
-                {
-                    category: { zh: "思維", en: "Mindset" },
-                    icon: "sparkles",
-                    title: { zh: "Daily Reprogramming", en: "Daily Reprogramming" },
-                    author: {
-                        zh: "把自己當作系統來迭代。每天 Reprogramming 大腦，維持高能量的產出與覺对力。(Mel Robbins)",
-                        en: "Systematizing my own brain daily to maintain high-energy output and sharp awareness. (Mel Robbins)"
-                    },
-                    link: "https://www.youtube.com/watch?v=jqArVJXZXaE&pp=ygUYbWVsIHJvYmJpbnMgcmVwcm9ncmFtaW5n"
-                },
-                {
-                    category: { zh: "學習中", en: "Learning" },
-                    icon: "pen",
-                    title: { zh: "Agentic Workflows & Advanced AI", en: "Agentic Workflows & Advanced AI" },
-                    author: {
-                        zh: "探索 AI 代理工作流，持續打破組織營運與技術的邊界。",
-                        en: "Pushing the boundaries of organizational tech and operational efficiency with frontier AI."
-                    },
-                    link: "https://www.youtube.com/watch?v=Ihoxov5x66k&pp=ygUPYWkgYWdlbnQgc2tpbGxz"
-                }
-            ],
-
-            // 💡 社群連結
-            social: [
-                { name: "LinkedIn", url: "https://www.linkedin.com/in/jane-huang1107", icon: "linkedin" },
-                { name: "GitHub", url: "#", icon: "github" }
-            ],
-
-            labels: {
-                zh: {
-                    navEthos: "核心理念", navWorks: "實戰", navCuration: "書房", navContact: "聯絡",
-                    theEthos: "核心理念", competencies: "核心技能", philosophy: "設計與策略哲學",
-                    theArtifacts: "專案實戰", selectedWorks: "精選專案",
-                    curation: "策展", currentlyInspired: "近期汲取靈感", curSub: "記錄正在塑造我思維的書、文字與學習。",
-                    theEpilogue: "終章", contactTitle: "Let's Connect!",
-                    requestResume: "索取完整履歷",
-                    confidential: "機密專案", ndaSub: "受 NDA 保護",
-                    scrollText: "滚動",
-                    footerSuffix: "版權所有。"
-                },
-                en: {
-                    navEthos: "Ethos", navWorks: "Works", navCuration: "Curation", navContact: "Contact",
-                    theEthos: "The Ethos", competencies: "Core Competencies", philosophy: "Philosophy",
-                    theArtifacts: "The Artifacts", selectedWorks: "Selected Works",
-                    curation: "Curation", currentlyInspired: "Currently Inspired By", curSub: "A small digital library of thoughts, books, and resources shaping my perspective.",
-                    theEpilogue: "The Epilogue", contactTitle: "Let's build something\ngame-changing together.",
-                    requestResume: "Request Full Resume",
-                    confidential: "Confidential Project", ndaSub: "Protected under NDA",
-                    scrollText: "Scroll",
-                    footerSuffix: "All rights reserved. Coded & Narrated."
-                }
-            }
-        };
-
-        // Helper: resolve a bilingual field
-        function t(field) {
-            if (!field || typeof field !== 'object') return field || '';
-            return field[currentLang] || field['en'] || '';
-        }
-
-        // =========================================================
-        // 🎨 SVG ICONS
-        // =========================================================
-        const Icons = {
-            chevronDown: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><polyline points="6,9 12,15 18,9"/></svg>`,
-            lock: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`,
-            book: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
-            pen: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
-            sparkles: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 17l.75 2.25L8 20l-2.25.75L5 23l-.75-2.25L2 20l2.25-.75L5 17z"/><path d="M19 2l.5 1.5L21 4l-1.5.5L19 6l-.5-1.5L17 4l1.5-.5L19 2z"/></svg>`,
-            arrowUpRight: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/></svg>`,
-            linkedin: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
-            github: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>`,
-            mail: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,5 12,13 21,5"/></svg>`
-        };
-
-        // =========================================================
-        // 🔨 RENDER FUNCTIONS
-        // =========================================================
-        function renderSkills() {
-            const container = document.getElementById('skills-list');
-            const L = DATA.labels[currentLang];
-            container.innerHTML = DATA.skills.map((skill, i) => `
-    <div class="skill-item" id="skill-${i}">
-      <button class="skill-header" onclick="toggleSkill(${i})" aria-expanded="false">
-        <span class="skill-name">${skill.name}</span>
-        <span class="skill-chevron">${Icons.chevronDown}</span>
+    <div class="nav-right">
+      <button id="lang-toggle" aria-label="Switch language">EN</button>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/></svg>
       </button>
-      <div class="skill-body" role="region">
-        <p class="skill-desc">${t(skill.desc)}</p>
-      </div>
     </div>
-  `).join('');
-        }
+  </nav>
 
-        function toggleSkill(i) {
-            const item = document.getElementById(`skill-${i}`);
-            const btn = item.querySelector('.skill-header');
-            const isOpen = item.classList.contains('open');
-            document.querySelectorAll('.skill-item').forEach(el => {
-                el.classList.remove('open');
-                el.querySelector('.skill-header').setAttribute('aria-expanded', 'false');
-            });
-            if (!isOpen) {
-                item.classList.add('open');
-                btn.setAttribute('aria-expanded', 'true');
-            }
-        }
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <button class="mobile-menu-close" id="mobile-close" aria-label="Close menu">
+      <svg viewBox="0 0 24 24"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+    </button>
+    <nav class="mobile-nav-links">
+      <a class="mobile-nav-link" href="#home">Home</a>
+      <a class="mobile-nav-link" href="#ethos">Ethos</a>
+      <a class="mobile-nav-link" href="#works">Works</a>
+      <a class="mobile-nav-link" href="#curation">Curation</a>
+      <a class="mobile-nav-link" href="#contact">Contact</a>
+    </nav>
+  </div>
 
-        function renderPhilosophy() {
-            document.getElementById('philosophy-grid').innerHTML = DATA.philosophy.map((p, i) => `
-    <div class="philosophy-item">
-      <span class="phi-num">0${i + 1} /</span>
-      <h3 class="phi-title">${p.title}</h3>
-      <p class="phi-desc">${t(p.desc)}</p>
+  <!-- HERO -->
+  <section id="home">
+    <div class="hero-bg">
+      <div class="hero-blob blob-1"></div>
+      <div class="hero-blob blob-2"></div>
+      <div class="hero-blob blob-3"></div>
+      <div class="hero-overlay"></div>
     </div>
-  `).join('');
-        }
-
-        function renderProjects() {
-            const L = DATA.labels[currentLang];
-            document.getElementById('projects-grid').innerHTML = DATA.projects.map((p, i) => `
-    <div class="project-card fade-in" style="transition-delay:${i * 0.1}s">
-      <a href="${p.link}" class="project-img-wrap">
-        ${p.isConfidential ? `
-          <div class="nda-card">
-            <div class="nda-inner">
-              ${Icons.lock}
-              <span class="nda-title">${L.confidential}</span>
-              <span class="nda-sub">${L.ndaSub}</span>
-            </div>
-          </div>
-        ` : `
-          <img src="${p.imageUrl}" alt="${p.title}" loading="lazy">
-          <div class="img-overlay"></div>
-        `}
+    <div class="hero-content">
+      <p class="hero-eyebrow" id="hero-name">Jane Huang</p>
+      <h1 class="hero-title serif" id="hero-headline">Turning complexity into clarity.</h1>
+      <p class="hero-zh" id="hero-zh">讓複雜的事，變成人們真正想用的東西。</p>
+      <p class="hero-sub" id="hero-sub">從 AI 代理到全球活動——我把組織裡最難解的摩擦點，轉化為人們真正願意打開、願意使用的產品與系統。</p>
+      <a href="#ethos" class="hero-cta" id="hero-cta">
+        看看我做了什麼
+        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
       </a>
-      <div class="project-meta">
-        <span>${p.year}</span><span class="dot"></span><span>${t(p.company)}</span>
-      </div>
-      <h3 class="project-title serif">${p.title}</h3>
-      <p class="project-role">${t(p.role)}</p>
-      <p class="project-desc">${t(p.desc)}</p>
-      <div class="project-tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
     </div>
-  `).join('');
-        }
+    <div class="scroll-indicator">
+      <span id="scroll-text" class="scroll-text">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
 
-        function renderInspirations() {
-            document.getElementById('inspiration-grid').innerHTML = DATA.inspirations.map(item => `
-    <a class="inspiration-card" href="${item.link}" target="${item.link !== '#' ? '_blank' : '_self'}" rel="noopener noreferrer">
-      <div class="insp-cat">${Icons[item.icon] || ''} ${t(item.category)}</div>
-      <div class="insp-title">
-        ${t(item.title)}
-        <span class="insp-arrow">${Icons.arrowUpRight}</span>
+  <!-- ETHOS -->
+  <section id="ethos">
+    <div class="ethos-inner">
+      <div class="fade-in">
+        <p id="ethos-eyebrow" class="section-eyebrow upper">The Ethos</p>
+        <blockquote id="ethos-quote" class="ethos-quote serif">「真正的影響力，不是自己站在聚光燈下，而在於為別人把前方的路點亮。」</blockquote>
       </div>
-      <p class="insp-author">${t(item.author)}</p>
-    </a>
-  `).join('');
+      <div class="fade-in ethos-right" style="transition-delay:0.12s">
+        <div id="about-text" class="about-text"></div>
+        <p id="competencies-label" class="skills-label upper"><span>Core Competencies</span></p>
+        <div class="skills-list" id="skills-list"></div>
+      </div>
+      <div class="philosophy fade-in" style="grid-column:1/-1; transition-delay:0.2s">
+        <p id="philosophy-label" class="section-eyebrow upper philosophy-label">Design Philosophy</p>
+        <div class="philosophy-grid" id="philosophy-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section id="works">
+    <div class="works-inner">
+      <div class="section-header fade-in">
+        <p id="artifacts-eyebrow" class="section-eyebrow upper">The Artifacts</p>
+        <h2 id="selected-works" class="section-title serif">Selected Works</h2>
+      </div>
+      <div class="projects-grid" id="projects-grid"></div>
+    </div>
+  </section>
+
+  <!-- CURATION -->
+  <section id="curation">
+    <div class="curation-inner fade-in">
+      <div class="curation-header">
+        <div>
+          <p id="curation-eyebrow" class="section-eyebrow upper">Curation</p>
+          <h2 id="inspired-title" class="section-title serif" style="font-size:clamp(1.4rem,2.5vw,1.8rem)">Currently Inspired By</h2>
+        </div>
+        <p id="curation-sub" class="curation-sub">A small digital library of thoughts, books, and resources shaping my perspective.</p>
+      </div>
+      <div class="inspiration-grid" id="inspiration-grid"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="fade-in" style="max-width:40rem;width:100%;">
+      <p id="epilogue-eyebrow" class="section-eyebrow upper" style="margin-bottom:2rem">The Epilogue</p>
+      <h2 id="contact-title" class="contact-title serif">Got a complex problem?<br>Let's build the solution.</h2>
+      <button class="contact-cta" id="resume-btn">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,5 12,13 21,5"/></svg>
+        <span id="resume-btn-text">Request Full Resume</span>
+      </button>
+      <div class="social-links" id="social-links"></div>
+      <p class="footer-copy" id="footer-copy"></p>
+    </div>
+  </section>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Back to Top -->
+  <button id="back-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24"><polyline points="18,15 12,9 6,15"/></svg>
+  </button>
+
+  <!-- PASSWORD MODAL -->
+  <div id="pw-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Enter password">
+    <div class="modal-box">
+      <button class="modal-close" id="pw-modal-close" aria-label="Close">×</button>
+      <div class="modal-lock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+      </div>
+      <h3 class="modal-title serif" id="pw-modal-title"></h3>
+      <p class="modal-hint" id="pw-modal-hint"></p>
+      <div class="pw-input-row">
+        <input type="password" id="pw-input" placeholder="Password" autocomplete="off">
+        <button class="pw-submit-btn" id="pw-submit" id="pw-modal-hint">→</button>
+      </div>
+      <p class="pw-error" id="pw-error"></p>
+    </div>
+  </div>
+
+  <!-- CONTENT MODAL (shown after correct password) -->
+  <div id="content-modal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box modal-box--wide">
+      <button class="modal-close" id="content-modal-close" aria-label="Close">×</button>
+      <div id="content-modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // ─── PASSWORD (stored as SHA-256 hash — plaintext never in code) ──────────
+    const STORED_HASH = '3fbf83db53c7bbedc2df8301fdf7c7c97f621f48fa0960a8ad455d9bf6d03e9c';
+
+    async function hashString(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    // ─── DATA ─────────────────────────────────────────────────────────────────
+    let currentLang = 'zh';
+    let pendingProjectIndex = null;
+
+    const DATA = {
+      name: "Jane Huang",
+      email: "janee110781@gmail.com",
+
+      hero: {
+        headline: { zh: "Turning complexity into clarity.", en: "Turning complexity into clarity." },
+        subZh: "讓複雜的事，變成人們真正想用的東西。",
+        sub: {
+          zh: "從 AI 代理到全球活動——我把組織裡最難解的摩擦點，轉化為人們真正願意打開、願意使用的產品與系統。",
+          en: "From AI agents that eliminate friction to global campaigns that move people — I turn organizational pain points into tools your team actually wants to use."
+        },
+        cta: { zh: "看看我做了什麼", en: "See What I Build" }
+      },
+
+      ethos: {
+        quote: {
+          zh: "「真正的影響力，不是自己站在聚光燈下，而在於為別人把前方的路點亮。」",
+          en: "\"True impact is not standing in the light, but illuminating the path for others.\""
+        },
+        about: {
+          zh: [
+            "如果你的組織裡有一個流程很痛、一份文件沒人想看、一個計畫明明有價值卻推不動——這就是我擅長處理的事。我的職涯跨越新聞記者（百萬讀者、六座全國獎項）、聯發科技企業溝通、全球專案管理與 DEI 倡議，表面上看似跨界，但核心始終如一：讓複雜的事情，變成人們真正能夠使用的東西。",
+            "近幾年，我把這件事延伸到 AI 開發。Jarvis 對話式 AI 代理讓申請時間縮短 77%；Vibe Coding 評審平台取代了 300 份 Word 文件；一個活動網站催生了全公司 IT 政策改變。說故事的能力沒有消失——它讓 AI 的每句對話都說得進人心，讓使用者旅程說得通。"
+          ],
+          en: [
+            "If your organization has a process that's painful, a program that's valuable but hard to explain, or a system held together by email threads — that's exactly where I work. My background spans journalism (1M+ readers, six national awards), corporate communications, global program management, and DEI at MediaTek. The through-line: turning complex things into something people actually use.",
+            "In recent years, I've built that into AI. Jarvis cut application processing time by 77%. A Vibe Coding scoring platform replaced 300 Word documents. A campaign website triggered a new company-wide IT policy. The storytelling skill didn't disappear — it's why the AI conversations land, and why the user flows make sense."
+          ]
         }
+      },
 
-        function renderLabels() {
-            const L = DATA.labels[currentLang];
-            const H = DATA.hero;
-            // Nav
-            document.getElementById('nav-logo').textContent = DATA.name;
-            document.querySelectorAll('.nav-link').forEach(el => {
-                const map = { ethos: L.navEthos, works: L.navWorks, curation: L.navCuration, contact: L.navContact };
-                if (map[el.dataset.section]) el.textContent = map[el.dataset.section];
-            });
-            // Hero
-            document.getElementById('hero-name').textContent = DATA.name;
-            document.getElementById('hero-headline').textContent = t(H.headline);
-            document.getElementById('hero-zh').textContent = currentLang === 'zh' ? H.subZh : '';
-            document.getElementById('hero-sub').textContent = t(H.sub);
-            document.getElementById('hero-cta').childNodes[0].textContent = t(H.cta) + ' ';
-            document.getElementById('scroll-text').textContent = L.scrollText;
-            // Ethos section labels
-            const ethosEyebrow = document.getElementById('ethos-eyebrow');
-            if (ethosEyebrow) ethosEyebrow.textContent = L.theEthos;
-            const ethosQuote = document.getElementById('ethos-quote');
-            if (ethosQuote) ethosQuote.textContent = t(DATA.ethos.quote);
-            const aboutEl = document.getElementById('about-text');
-            if (aboutEl) aboutEl.innerHTML = t(DATA.ethos.about).map(p => `<p>${p}</p>`).join('');
-            const compLabel = document.getElementById('competencies-label');
-            if (compLabel) compLabel.querySelector('span') && (compLabel.querySelector('span').textContent = L.competencies);
-            const phiLabel = document.getElementById('philosophy-label');
-            if (phiLabel) phiLabel.textContent = L.philosophy;
-            // Works
-            const artifactsEyebrow = document.getElementById('artifacts-eyebrow');
-            if (artifactsEyebrow) artifactsEyebrow.textContent = L.theArtifacts;
-            const selectedWorksEl = document.getElementById('selected-works');
-            if (selectedWorksEl) selectedWorksEl.textContent = L.selectedWorks;
-            // Curation
-            const curationEyebrow = document.getElementById('curation-eyebrow');
-            if (curationEyebrow) curationEyebrow.textContent = L.curation;
-            const inspiredTitle = document.getElementById('inspired-title');
-            if (inspiredTitle) inspiredTitle.textContent = L.currentlyInspired;
-            const curSubEl = document.getElementById('curation-sub');
-            if (curSubEl) curSubEl.textContent = L.curSub;
-            // Contact
-            const epilogueEyebrow = document.getElementById('epilogue-eyebrow');
-            if (epilogueEyebrow) epilogueEyebrow.textContent = L.theEpilogue;
-            const contactTitleEl = document.getElementById('contact-title');
-            if (contactTitleEl) contactTitleEl.textContent = L.contactTitle;
-            const resumeBtn = document.getElementById('resume-btn-text');
-            if (resumeBtn) resumeBtn.textContent = L.requestResume;
-            // Footer
-            document.getElementById('footer-copy').textContent =
-                `© ${new Date().getFullYear()} ${DATA.name}. ${L.footerSuffix}`;
-            // Lang toggle shows the OTHER language
-            document.getElementById('lang-toggle').textContent = currentLang === 'zh' ? 'EN' : '中';
+      skills: [
+        {
+          name: "AI & Agent Building",
+          desc: {
+            zh: "你的繁瑣申請表，可以變成 AI 替你問完的一段對話。你的重複性行政流程，可以變成自動化系統。從 Copilot Studio 的提示設計到 Gemini API 整合，我把組織裡最耗人力的痛點，轉化成人們真正願意用的 AI 工具。",
+            en: "Your manual forms can become AI conversations. Your repetitive admin can become an automated flow. From Copilot Studio prompt design to Gemini API integrations, I turn the most friction-heavy parts of your organization into AI tools people actually want to open."
+          }
+        },
+        {
+          name: "Organizational Facilitation",
+          desc: {
+            zh: "跨世代的沉默、跨部門的壁壘，不會因為開個會就消失。我設計工作坊的結構與對話流程，讓人們在安全感中真正開口。在高度理性的工程師文化裡，為 700+ 名跨世代參與者創造有效的對話空間。",
+            en: "Generational gaps and cross-department silos don't dissolve from a single all-hands. I design the workshop structures and conversation flows that make people feel safe enough to actually speak. Facilitated for 700+ participants inside a highly rational engineering culture."
+          }
+        },
+        {
+          name: "Strategic Storytelling",
+          desc: {
+            zh: "複雜的計畫要讓人秒懂，高層簡報要讓人想行動，AI 代理的每句話要讓人願意繼續回答——我把專業成果翻譯成人們真正在乎的語言。六座全國獎項，一個始終如一的能力。",
+            en: "Complex programs need to land in thirty seconds. Executive briefings need to move people to act. AI conversations need to feel like talking to someone who gets it. I translate outcomes into language people care about. Six national awards. One consistent skill."
+          }
+        },
+        {
+          name: "Global Project Governance",
+          desc: {
+            zh: "橫跨 10+ 個國際據點、1.8 萬名員工的計畫，不能靠 email 維繫。我建立 SOP、定義跨工具的資料流、管理里程碑進度，把原本仰賴外部顧問的不透明流程，轉化為組織自己能掌控、能複製的系統。",
+            en: "Programs spanning 18,000 employees across 10+ countries can't run on email threads. I build the SOPs, cross-tool data flows, and milestone systems that make large programs manageable — and eventually, self-sustaining without external consultants."
+          }
         }
+      ],
 
-        function renderSocial() {
-            document.getElementById('social-links').innerHTML = DATA.social.map(s => `
-    <a class="social-link" href="${s.url}" target="${s.url !== '#' ? '_blank' : '_self'}" rel="noopener noreferrer">
-      ${Icons[s.icon] || ''}
-      <span class="sr-only">${s.name}</span>
-      <span>${s.name}</span>
-    </a>
-  `).join('');
+      philosophy: [
+        {
+          title: "Empathy as the Architecture",
+          desc: {
+            zh: "我在動手建任何東西之前，都會先問一個問題：「誰會卡在哪裡？」這個問題，決定了 Jarvis 要問哪些問題、活動網站要放什麼 FAQ、評審系統要長什麼樣。功能清單從來不是起點——人的困境才是。",
+            en: "Before I touch the build, I ask: where does the person get stuck? That question determines what Jarvis asks, what the FAQ page answers, what the scoring system looks like. The feature list is never the starting point — the person's friction is."
+          }
+        },
+        {
+          title: "Automate the Chaos",
+          desc: {
+            zh: "你的團隊不需要更多工具——他們需要更少障礙。我用 AI 和系統設計把行政壁壘變成順暢體驗，讓繁瑣的申請流程變成五分鐘的對話，讓需要三人審核的報表變成即時儀表板。時間，應該還給真正重要的事。",
+            en: "Your team doesn't need more tools. They need fewer obstacles. I use AI and system design to turn administrative walls into seamless flows — so a painful 90-minute application becomes a 5-minute conversation, and a three-person approval chain becomes a live dashboard."
+          }
+        },
+        {
+          title: "Supporting Others' Success",
+          desc: {
+            zh: "我不需要站在台上。我需要知道我建的東西，在我離開之後還在運作。衡量標準很簡單：你的團隊跑得更快了嗎？你的計畫更順了嗎？你的受眾有沒有動起來？",
+            en: "I don't need credit in the room. I need to know the thing I built is still running after I leave. My success metric is simple: does your team move faster? Does your program run smoother? Did your audience act?"
+          }
         }
+      ],
 
-        // Full re-render when language switches
-        function renderAll() {
-            renderSkills();
-            renderPhilosophy();
-            renderProjects();
-            renderInspirations();
-            renderLabels();
+      projects: [
+        {
+          title: "2026 Global Volunteer Hero Recognition",
+          role: { zh: "全球傑出志工英雄獎項設計與 AI 系統導入", en: "Project Lead & AI System Implementer" },
+          company: "聯發科技 MediaTek",
+          year: "2026",
+          desc: {
+            zh: "一個靠 Word 和 email 運作的傳統 HR 計畫，在這裡變成了三工具 AI 生態系：申請時間縮短 77%，評審流程取代 300 份文件，1.8 萬名員工觸及，並催生全公司 IT 政策改變。",
+            en: "A legacy HR program stuck in Word docs became a three-tool AI ecosystem — cutting application time by 77%, replacing 300 Word documents, reaching 18,000 employees, and triggering a new company-wide IT policy."
+          },
+          tags: ["Vibe Coding", "AI Agent", "Global Campaign", "0-to-1", "PRD"],
+          isConfidential: true,
+          imageUrl: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1600&q=80",
+          caseStudyLink: "gvh-case-study.html",
+          secretContent: {
+            fullDesc: {
+              zh: "接手一個卡在 Word 文件與繁複人工流程中的傳統 HR 計畫，從問題定義到政策改變，完整擁有產品生命週期。\n\n開發前先完整規劃跨三工具的端對端資料流（宣傳 → 報名 → 評審），以 Excel Master Plan 管理里程碑，定期向主管匯報進度。\n\n• Jarvis AI 代理：設計關鍵字引導對話流程，替代繁瑣申請表單；定義輸出格式與欄位結構，讓資料自動對應評審平台。處理時間從 90 分鐘縮短至 20 分鐘（↓77%），申請完成率顯著提升。\n\n• GVH 評審平台（Vibe Coding）：取代 ~300 份 Word 文件；7 位評審、40 份申請、加權排名、即時儀表板，全程無紙化。\n\n• GVH 活動網站（Vibe Coding）：聯發科 HR 史上首個 Vibe Coding 專案，成果直接推動全公司 Web 開發政策制定（與 IT 共同草擬）。帶領 40 位同仁完成 Vibe Coding 工作坊，建立可複製的組織 AI 能力模型。",
+              en: "Took over a legacy HR program stuck in Word docs and manual processes — owned the full product lifecycle from problem definition to policy change.\n\nBefore any tool was built, mapped the complete cross-tool data flow (promotion → application → review) and defined output specs for every handoff. Built a master delivery plan in Excel; reported milestone progress to management in regular check-ins.\n\n• Jarvis AI Agent: Designed keyword-guided conversation flows replacing long application forms; defined output format and field mapping so submissions auto-populate the review platform. Processing time: 90 → 20 min (↓77%). Completion rate significantly improved.\n\n• GVH Review Platform (Vibe Coding): Replaced ~300 Word docs with a mobile-first, real-time scoring system. 7 reviewers, 40 applications, weighted rankings, instant analytics — zero spreadsheet errors.\n\n• GVH Promo Website (Vibe Coding): MediaTek HR's first-ever Vibe Coding project. Success triggered a new company-wide IT/HR Web Development Policy (co-drafted with IT). Led a 40-person Vibe Coding workshop to build a replicable AI capability model."
+            },
+            highlights: [
+              { label: { zh: "處理時間縮短", en: "Processing time reduced" }, value: "↓77%" },
+              { label: { zh: "觸及員工人數", en: "Employees reached" }, value: "18,000+" },
+              { label: { zh: "培訓同仁人數", en: "Colleagues trained" }, value: "40人" },
+              { label: { zh: "政策影響層級", en: "Policy impact" }, value: "全公司" }
+            ],
+            links: [
+              { label: "Live: GVH Website", url: "https://janee1107.github.io/GVH/" },
+              { label: "Live: Review Platform", url: "https://janee1107.github.io/GVH_2026_Review/" }
+            ]
+          }
+        },
+        {
+          title: "2025 Global Employee Survey",
+          role: { zh: "全球員工意見調查專案經理與內容策略師", en: "Global Employee Survey Project Manager & Content Strategist" },
+          company: "聯發科技 MediaTek",
+          year: "2025",
+          desc: {
+            zh: "把流程不透明、高度仰賴外部顧問的全球員工調查，從 0 到 1 完整接手——SOP 建立、問卷設計、全球宣傳、數據分析，全程自主掌控，橫跨 10+ 個據點、1.8 萬名員工。",
+            en: "Took a consultant-dependent, opaque global survey fully in-house — from SOP to questionnaire design to global rollout and data analysis — for 18,000+ employees across 10+ locations."
+          },
+          tags: ["0-to-1 Execution", "Content Strategy", "Global Comms", "SOP Design"],
+          isConfidential: true,
+          imageUrl: "",
+          secretContent: {
+            fullDesc: {
+              zh: "原本這個計畫高度依賴外部管理顧問，流程不透明、成本高昂。我接手後，從零建立完整 SOP，讓這個龐大的跨國專案得以真正內製化。\n\n• 主導問卷設計：與多個跨功能利害關係人協作，確保問題精準反映組織關切。\n• 產製全球化宣傳內容：為 10+ 個國際據點設計一致且具識別度的推廣敘事，橫跨多語系市場。\n• 全程數據分析與高管報告：從數據清理、交叉分析到 L2+ 簡報，全程自主處理。\n• 建立 AI 知識庫：解決 70+ 件作業異常，制定組織內 AI 輔助 HR 流程新標準。",
+              en: "This program was previously heavily dependent on external management consultants — opaque processes, high costs. I took ownership and built comprehensive SOPs from scratch, making the entire program genuinely internal.\n\n• Led questionnaire design: Collaborated with multiple cross-functional stakeholders to ensure questions accurately reflected organizational priorities.\n• Produced global promotional content: Designed consistent, recognizable narratives for 10+ international sites across multilingual markets.\n• End-to-end data analysis and executive reporting: From data cleaning and cross-tabulation to L2+ briefings — fully self-managed.\n• Built AI knowledge bases: Resolved 70+ operational anomalies and set new internal standards for AI-assisted HR processes."
+            },
+            highlights: [
+              { label: { zh: "觸及員工人數", en: "Employees reached" }, value: "18,000+" },
+              { label: { zh: "國際據點", en: "International sites" }, value: "10+" },
+              { label: { zh: "解決作業異常", en: "Anomalies resolved" }, value: "70+" },
+              { label: { zh: "滿意度評分", en: "Satisfaction score" }, value: "4.7/5" }
+            ],
+            links: []
+          }
+        },
+        {
+          title: "I-Connect ERG",
+          role: { zh: "跨世代員工資源團體發起人與活動統籌", en: "Founder & Project Lead" },
+          company: "聯發科技 MediaTek",
+          year: "2024",
+          desc: {
+            zh: "在工程師文化裡，人際距離是常態。I-Connect 從零建立，讓跨世代、跨部門的 700+ 名員工真正開口對話——5 場百人規模活動，在高度理性的組織裡創造出真實的心理安全感。",
+            en: "In an engineering culture where interpersonal distance is the default, I-Connect created the spaces where 700+ employees across generations actually talked — 5+ large-scale events, built from scratch inside a highly rational organization."
+          },
+          tags: ["Workshop Design", "Facilitation", "DEI", "Org Culture"],
+          isConfidential: false,
+          imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80",
+          link: "https://www.facebook.com/share/p/16x4sNeocz/"
+        },
+        {
+          title: "FLOW — AI Conversational App",
+          role: { zh: "個人專案｜Product Designer & Developer", en: "Personal Project｜Product Designer & Developer" },
+          company: "Personal",
+          year: "2026",
+          desc: {
+            zh: "AI 原生的 UX 體驗應該長什麼樣？這是我用來探索這個問題的個人專案——整合 Gemini API 實現對話式功能，從構想到部署全程獨立完成，React + TypeScript 全端開發。",
+            en: "What does AI-native UX actually feel like when you build it yourself? This is my answer — a personal app integrating Gemini API for conversational features, built independently from concept to Vercel deployment with React + TypeScript."
+          },
+          tags: ["Gemini API", "React", "TypeScript", "Vibe Coding", "AI-native UX"],
+          isConfidential: false,
+          imageUrl: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1600&q=80",
+          link: "https://github.com/janee1107/FLOW"
+        },
+        {
+          title: "heart-home-finance",
+          role: { zh: "個人專案｜Product Designer & Developer", en: "Personal Project｜Product Designer & Developer" },
+          company: "Personal",
+          year: "2026",
+          desc: {
+            zh: "用 Lovable 建立的個人財務管理應用，React + TypeScript + Tailwind 技術棧。這是 FLOW 的前身迭代版本，也是我驗證「AI 輔助產品開發從構想到上線」全流程的實驗場。",
+            en: "A personal finance app built with Lovable — the prototype iteration before FLOW. Built to validate the full AI-assisted development pipeline, from idea to deployment, using React + TypeScript + Tailwind."
+          },
+          tags: ["Lovable", "React", "TypeScript", "Tailwind", "AI-assisted Dev"],
+          isConfidential: false,
+          imageUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80",
+          link: "https://github.com/janee1107/heart-home-finance"
         }
+      ],
 
-        // =========================================================
-        // 🎯 INTERACTIONS
-        // =========================================================
-
-        // Navbar scroll + active section highlight
-        const navbar = document.getElementById('navbar');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const sections = ['home', 'ethos', 'works', 'curation', 'contact'];
-        const backTop = document.getElementById('back-top');
-
-        window.addEventListener('scroll', () => {
-            const y = window.scrollY;
-            navbar.classList.toggle('scrolled', y > 50);
-            backTop.classList.toggle('show', y > 400);
-
-            // Active section highlight
-            let currentSection = 'home';
-            sections.forEach(id => {
-                const el = document.getElementById(id);
-                if (el && el.getBoundingClientRect().top <= 100) currentSection = id;
-            });
-            navLinks.forEach(link => {
-                link.classList.toggle('active', link.dataset.section === currentSection);
-            });
-        }, { passive: true });
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(el => {
-            el.addEventListener('click', e => {
-                const href = el.getAttribute('href');
-                if (!href || !href.startsWith('#')) return;
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                closeMobileMenu();
-            });
-        });
-
-        // Language toggle
-        document.getElementById('lang-toggle').addEventListener('click', () => {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            document.documentElement.lang = currentLang;
-            renderAll();
-            // Re-observe fade-ins for any new elements
-            document.querySelectorAll('.fade-in:not(.visible)').forEach(el => io.observe(el));
-        });
-
-        // Mobile menu
-        const mobileMenu = document.getElementById('mobile-menu');
-        document.getElementById('hamburger').addEventListener('click', () => {
-            mobileMenu.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        });
-        function closeMobileMenu() {
-            mobileMenu.classList.remove('open');
-            document.body.style.overflow = '';
+      inspirations: [
+        {
+          category: { zh: "閱讀", en: "Reading" },
+          icon: "book",
+          title: { zh: "《鯨》(The Whale)", en: "The Whale" },
+          author: { zh: "生命是荒涼而美麗的敘事，悲劇的發生毫無意義，我們唯一能做的是擁抱當下。", en: "Life is a desolate yet beautiful narrative. Tragedies occur without reason; all we can do is embrace the present." },
+          link: "https://thebookerprizes.com/the-booker-library/books/whale"
+        },
+        {
+          category: { zh: "思維", en: "Mindset" },
+          icon: "sparkles",
+          title: { zh: "Daily Reprogramming", en: "Daily Reprogramming" },
+          author: { zh: "把自己當作系統來迭代。每天 Reprogramming 大腦，維持高能量的產出與覺察力。(Mel Robbins)", en: "Treat yourself as a system to iterate. Reprogram the brain daily to maintain high-energy output and sharp awareness. (Mel Robbins)" },
+          link: "https://www.youtube.com/watch?v=jqArVJXZXaE"
+        },
+        {
+          category: { zh: "學習中", en: "Learning" },
+          icon: "pen",
+          title: { zh: "Agentic Workflows & Advanced AI", en: "Agentic Workflows & Advanced AI" },
+          author: { zh: "探索 AI 代理工作流，持續打破組織營運與技術的邊界。", en: "Pushing the boundaries of organizational tech and operational efficiency with frontier AI." },
+          link: "https://www.youtube.com/watch?v=Ihoxov5x66k"
         }
-        document.getElementById('mobile-close').addEventListener('click', closeMobileMenu);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileMenu(); });
+      ],
 
-        // Resume button
-        document.getElementById('resume-btn').addEventListener('click', () => {
-            const subj = currentLang === 'zh'
-                ? encodeURIComponent("您好，我想索取您的完整履歷！")
-                : encodeURIComponent("Hi, I'd like to request your full resume!");
-            const body = currentLang === 'zh'
-                ? encodeURIComponent("您好，\n\n我看了您的作品集，非常感興趣。能否分享完整履歷？\n\n謝謝")
-                : encodeURIComponent("Hi,\n\nI loved your portfolio and would like to learn more. Could you share your resume?\n\nBest regards,");
-            window.location.href = `mailto:${DATA.email}?subject=${subj}&body=${body}`;
-        });
+      social: [
+        { name: "LinkedIn", url: "https://www.linkedin.com/in/jane-huang1107", icon: "linkedin" },
+        { name: "GitHub", url: "https://github.com/janee1107", icon: "github" }
+      ],
 
-        // Toast helper
-        function showToast(msg) {
-            const el = document.getElementById('toast');
-            el.textContent = msg;
-            el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 2800);
+      labels: {
+        zh: {
+          navEthos: "核心理念", navWorks: "實戰", navCuration: "書房", navContact: "聯絡",
+          theEthos: "核心理念", competencies: "核心技能", philosophy: "設計與策略哲學",
+          theArtifacts: "專案實戰", selectedWorks: "精選專案",
+          curation: "策展", currentlyInspired: "近期汲取靈感", curSub: "記錄正在塑造我思維的書、文字與學習。",
+          theEpilogue: "終章", contactTitle: "有想解決的問題？\n我們來聊。",
+          requestResume: "索取完整履歷",
+          confidential: "機密專案", ndaSub: "受保護", ndaHint: "點擊輸入密碼查看",
+          viewCaseStudy: "查看案例研究",
+          pwTitle: "機密專案", pwHint: "此為機密內容，請輸入密碼以瀏覽完整案例。",
+          pwError: "密碼錯誤，請再試一次。", pwPlaceholder: "Password",
+          scrollText: "滾動", footerSuffix: "版權所有。"
+        },
+        en: {
+          navEthos: "Ethos", navWorks: "Works", navCuration: "Curation", navContact: "Contact",
+          theEthos: "The Ethos", competencies: "Core Competencies", philosophy: "Philosophy",
+          theArtifacts: "The Artifacts", selectedWorks: "Selected Works",
+          curation: "Curation", currentlyInspired: "Currently Inspired By", curSub: "A small digital library of thoughts, books, and resources shaping my perspective.",
+          theEpilogue: "The Epilogue", contactTitle: "Got a complex problem?\nLet's build the solution.",
+          requestResume: "Request Full Resume",
+          confidential: "Confidential Project", ndaSub: "Protected", ndaHint: "Click to enter password",
+          viewCaseStudy: "View Case Study",
+          pwTitle: "Confidential Project", pwHint: "This project is protected. Enter the password to view the full case study.",
+          pwError: "Incorrect password. Please try again.", pwPlaceholder: "Password",
+          scrollText: "Scroll", footerSuffix: "All rights reserved. Coded & Narrated."
         }
+      }
+    };
 
-        // Back to Top
-        backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    // ─── HELPERS ──────────────────────────────────────────────────────────────
+    function t(field) {
+      if (!field || typeof field !== 'object') return field || '';
+      return field[currentLang] || field['en'] || '';
+    }
 
-        // Scroll fade-in
-        const io = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    io.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    const Icons = {
+      chevronDown: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><polyline points="6,9 12,15 18,9"/></svg>`,
+      lock: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`,
+      book: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
+      pen: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
+      sparkles: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 17l.75 2.25L8 20l-2.25.75L5 23l-.75-2.25L2 20l2.25-.75L5 17z"/><path d="M19 2l.5 1.5L21 4l-1.5.5L19 6l-.5-1.5L17 4l1.5-.5L19 2z"/></svg>`,
+      arrowUpRight: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/></svg>`,
+      externalLink: `<svg viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+      linkedin: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
+      github: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>`,
+      mail: `<svg viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,5 12,13 21,5"/></svg>`
+    };
 
-        function observeFadeIns() {
-            document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+    // ─── RENDER ───────────────────────────────────────────────────────────────
+    function renderSkills() {
+      document.getElementById('skills-list').innerHTML = DATA.skills.map((s, i) => `
+        <div class="skill-item" id="skill-${i}">
+          <button class="skill-header" onclick="toggleSkill(${i})" aria-expanded="false">
+            <span class="skill-name">${s.name}</span>
+            <span class="skill-chevron">${Icons.chevronDown}</span>
+          </button>
+          <div class="skill-body"><p class="skill-desc">${t(s.desc)}</p></div>
+        </div>`).join('');
+    }
+
+    function toggleSkill(i) {
+      const item = document.getElementById(`skill-${i}`);
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.skill-item').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.skill-header').setAttribute('aria-expanded','false');
+      });
+      if (!isOpen) { item.classList.add('open'); item.querySelector('.skill-header').setAttribute('aria-expanded','true'); }
+    }
+
+    function renderPhilosophy() {
+      document.getElementById('philosophy-grid').innerHTML = DATA.philosophy.map((p, i) => `
+        <div class="philosophy-item">
+          <span class="phi-num">0${i+1} /</span>
+          <h3 class="phi-title">${p.title}</h3>
+          <p class="phi-desc">${t(p.desc)}</p>
+        </div>`).join('');
+    }
+
+    function renderProjects() {
+      const L = DATA.labels[currentLang];
+      document.getElementById('projects-grid').innerHTML = DATA.projects.map((p, i) => {
+        if (p.isConfidential) {
+          // Case study link present → blurred image + direct link (no password)
+          if (p.caseStudyLink) {
+            return `
+              <div class="project-card fade-in" style="transition-delay:${i*0.1}s">
+                <a href="${p.caseStudyLink}" class="project-img-wrap blurred-nda">
+                  <img src="${p.imageUrl}" alt="${p.title}" loading="lazy">
+                  <div class="nda-lock-overlay">
+                    <div class="nda-inner">
+                      ${Icons.lock}
+                      <span class="nda-title">${L.confidential}</span>
+                      <span class="nda-sub">${L.ndaSub}</span>
+                    </div>
+                  </div>
+                </a>
+                <div class="project-meta"><span>${p.year}</span><span class="dot"></span><span>${p.company}</span></div>
+                <h3 class="project-title serif">${p.title}</h3>
+                <p class="project-role">${t(p.role)}</p>
+                <p class="project-desc">${t(p.desc)}</p>
+                <div class="project-tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+                <a href="${p.caseStudyLink}" class="project-cta">${L.viewCaseStudy} →</a>
+              </div>`;
+          }
+          // Default → password-protected NDA card
+          return `
+            <div class="project-card fade-in" style="transition-delay:${i*0.1}s">
+              <div class="nda-wrap" onclick="openPwModal(${i})" role="button" tabindex="0" aria-label="View confidential project: ${p.title}">
+                <div class="nda-card">
+                  <div class="nda-inner">
+                    ${Icons.lock}
+                    <span class="nda-title">${L.confidential}</span>
+                    <span class="nda-sub">${L.ndaSub}</span>
+                    <span class="nda-hint">${L.ndaHint}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="project-meta"><span>${p.year}</span><span class="dot"></span><span>${p.company}</span></div>
+              <h3 class="project-title serif">${p.title}</h3>
+              <p class="project-role">${t(p.role)}</p>
+              <p class="project-desc">${t(p.desc)}</p>
+              <div class="project-tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+            </div>`;
         }
+        return `
+          <div class="project-card fade-in" style="transition-delay:${i*0.1}s">
+            <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="project-img-wrap">
+              <img src="${p.imageUrl}" alt="${p.title}" loading="lazy">
+              <div class="img-overlay"></div>
+            </a>
+            <div class="project-meta"><span>${p.year}</span><span class="dot"></span><span>${p.company}</span></div>
+            <h3 class="project-title serif">${p.title}</h3>
+            <p class="project-role">${t(p.role)}</p>
+            <p class="project-desc">${t(p.desc)}</p>
+            <div class="project-tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+          </div>`;
+      }).join('');
+    }
 
-        // =========================================================
-        // 🚀 INIT
-        // =========================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            renderSocial();
-            renderAll();
-            observeFadeIns();
-        });
-    </script>
+    function renderInspirations() {
+      document.getElementById('inspiration-grid').innerHTML = DATA.inspirations.map(item => `
+        <a class="inspiration-card" href="${item.link}" target="_blank" rel="noopener noreferrer">
+          <div class="insp-cat">${Icons[item.icon]||''} ${t(item.category)}</div>
+          <div class="insp-title">${t(item.title)}<span class="insp-arrow">${Icons.arrowUpRight}</span></div>
+          <p class="insp-author">${t(item.author)}</p>
+        </a>`).join('');
+    }
 
+    function renderLabels() {
+      const L = DATA.labels[currentLang];
+      const H = DATA.hero;
+      document.getElementById('nav-logo').textContent = DATA.name;
+      document.querySelectorAll('.nav-link').forEach(el => {
+        const map = { ethos: L.navEthos, works: L.navWorks, curation: L.navCuration, contact: L.navContact };
+        if (map[el.dataset.section]) el.textContent = map[el.dataset.section];
+      });
+      document.getElementById('hero-name').textContent = DATA.name;
+      document.getElementById('hero-headline').textContent = t(H.headline);
+      document.getElementById('hero-zh').textContent = currentLang === 'zh' ? H.subZh : '';
+      document.getElementById('hero-sub').textContent = t(H.sub);
+      document.getElementById('hero-cta').childNodes[0].textContent = t(H.cta) + ' ';
+      document.getElementById('scroll-text').textContent = L.scrollText;
+      const eq = document.getElementById('ethos-eyebrow'); if(eq) eq.textContent = L.theEthos;
+      const quote = document.getElementById('ethos-quote'); if(quote) quote.textContent = t(DATA.ethos.quote);
+      const aboutEl = document.getElementById('about-text'); if(aboutEl) aboutEl.innerHTML = t(DATA.ethos.about).map(p=>`<p>${p}</p>`).join('');
+      const compLabel = document.getElementById('competencies-label'); if(compLabel && compLabel.querySelector('span')) compLabel.querySelector('span').textContent = L.competencies;
+      const phiLabel = document.getElementById('philosophy-label'); if(phiLabel) phiLabel.textContent = L.philosophy;
+      const ae = document.getElementById('artifacts-eyebrow'); if(ae) ae.textContent = L.theArtifacts;
+      const sw = document.getElementById('selected-works'); if(sw) sw.textContent = L.selectedWorks;
+      const ce = document.getElementById('curation-eyebrow'); if(ce) ce.textContent = L.curation;
+      const it = document.getElementById('inspired-title'); if(it) it.textContent = L.currentlyInspired;
+      const cs = document.getElementById('curation-sub'); if(cs) cs.textContent = L.curSub;
+      const ee = document.getElementById('epilogue-eyebrow'); if(ee) ee.textContent = L.theEpilogue;
+      const ct = document.getElementById('contact-title'); if(ct) ct.textContent = L.contactTitle;
+      const rb = document.getElementById('resume-btn-text'); if(rb) rb.textContent = L.requestResume;
+      document.getElementById('footer-copy').textContent = `© ${new Date().getFullYear()} ${DATA.name}. ${L.footerSuffix}`;
+      document.getElementById('lang-toggle').textContent = currentLang === 'zh' ? 'EN' : '中';
+    }
+
+    function renderSocial() {
+      document.getElementById('social-links').innerHTML = DATA.social.map(s => `
+        <a class="social-link" href="${s.url}" target="_blank" rel="noopener noreferrer">
+          ${Icons[s.icon]||''}<span>${s.name}</span>
+        </a>`).join('');
+    }
+
+    function renderAll() {
+      renderSkills(); renderPhilosophy(); renderProjects(); renderInspirations(); renderLabels();
+    }
+
+    // ─── PASSWORD MODAL ───────────────────────────────────────────────────────
+    function openPwModal(projectIndex) {
+      pendingProjectIndex = projectIndex;
+      const L = DATA.labels[currentLang];
+      const p = DATA.projects[projectIndex];
+      document.getElementById('pw-modal-title').textContent = p.title;
+      document.getElementById('pw-modal-hint').textContent = L.pwHint;
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-error').textContent = '';
+      document.getElementById('pw-modal').classList.add('open');
+      setTimeout(() => document.getElementById('pw-input').focus(), 100);
+    }
+
+    function closePwModal() {
+      document.getElementById('pw-modal').classList.remove('open');
+      pendingProjectIndex = null;
+    }
+
+    async function submitPassword() {
+      const input = document.getElementById('pw-input').value;
+      const L = DATA.labels[currentLang];
+      const hash = await hashString(input);
+      if (hash === STORED_HASH) {
+        closePwModal();
+        showContentModal(pendingProjectIndex);
+      } else {
+        const inputEl = document.getElementById('pw-input');
+        document.getElementById('pw-error').textContent = L.pwError;
+        inputEl.classList.add('shake');
+        setTimeout(() => inputEl.classList.remove('shake'), 450);
+      }
+    }
+
+    document.getElementById('pw-submit').addEventListener('click', submitPassword);
+    document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key === 'Enter') submitPassword(); });
+    document.getElementById('pw-modal-close').addEventListener('click', closePwModal);
+    document.getElementById('pw-modal').addEventListener('click', e => { if(e.target === document.getElementById('pw-modal')) closePwModal(); });
+
+    // ─── CONTENT MODAL ────────────────────────────────────────────────────────
+    function showContentModal(projectIndex) {
+      const p = DATA.projects[projectIndex];
+      const sc = p.secretContent;
+      const L = DATA.labels[currentLang];
+
+      const highlightsHTML = sc.highlights.map(h => `
+        <div class="cm-highlight">
+          <div class="cm-hl-value">${h.value}</div>
+          <div class="cm-hl-label">${t(h.label)}</div>
+        </div>`).join('');
+
+      const linksHTML = sc.links.length ? `
+        <div class="cm-links">
+          ${sc.links.map(l => `<a class="cm-link" href="${l.url}" target="_blank" rel="noopener noreferrer">${Icons.externalLink} ${l.label}</a>`).join('')}
+        </div>` : '';
+
+      document.getElementById('content-modal-body').innerHTML = `
+        <div class="cm-header">
+          <p class="cm-eyebrow">${p.year} · ${p.company}</p>
+          <h2 class="cm-title serif">${p.title}</h2>
+          <p class="cm-role">${t(p.role)}</p>
+        </div>
+        <p class="cm-desc">${t(sc.fullDesc)}</p>
+        <div class="cm-highlights">${highlightsHTML}</div>
+        ${linksHTML}
+        <div class="cm-tags">${p.tags.map(tag=>`<span class="tag">${tag}</span>`).join('')}</div>`;
+
+      document.getElementById('content-modal').classList.add('open');
+    }
+
+    function closeContentModal() { document.getElementById('content-modal').classList.remove('open'); }
+    document.getElementById('content-modal-close').addEventListener('click', closeContentModal);
+    document.getElementById('content-modal').addEventListener('click', e => { if(e.target === document.getElementById('content-modal')) closeContentModal(); });
+
+    // Close any modal on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closePwModal(); closeContentModal(); closeMobileMenu(); }
+    });
+
+    // ─── INTERACTIONS ─────────────────────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = ['home','ethos','works','curation','contact'];
+    const backTop = document.getElementById('back-top');
+
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      navbar.classList.toggle('scrolled', y > 50);
+      backTop.classList.toggle('show', y > 400);
+      let current = 'home';
+      sections.forEach(id => { const el = document.getElementById(id); if(el && el.getBoundingClientRect().top <= 100) current = id; });
+      navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === current));
+    }, { passive: true });
+
+    document.querySelectorAll('a[href^="#"]').forEach(el => {
+      el.addEventListener('click', e => {
+        const href = el.getAttribute('href');
+        if (!href?.startsWith('#')) return;
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+        closeMobileMenu();
+      });
+    });
+
+    document.getElementById('lang-toggle').addEventListener('click', () => {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      document.documentElement.lang = currentLang;
+      renderAll();
+      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => io.observe(el));
+    });
+
+    const mobileMenu = document.getElementById('mobile-menu');
+    document.getElementById('hamburger').addEventListener('click', () => { mobileMenu.classList.add('open'); document.body.style.overflow='hidden'; });
+    function closeMobileMenu() { mobileMenu.classList.remove('open'); document.body.style.overflow=''; }
+    document.getElementById('mobile-close').addEventListener('click', closeMobileMenu);
+
+    document.getElementById('resume-btn').addEventListener('click', () => {
+      const subj = currentLang === 'zh' ? encodeURIComponent("您好，我想索取您的完整履歷！") : encodeURIComponent("Hi, I'd like to request your full resume!");
+      const body = currentLang === 'zh' ? encodeURIComponent("您好，\n\n我看了您的作品集，非常感興趣。能否分享完整履歷？\n\n謝謝") : encodeURIComponent("Hi,\n\nI loved your portfolio and would like to learn more. Could you share your resume?\n\nBest regards,");
+      window.location.href = `mailto:${DATA.email}?subject=${subj}&body=${body}`;
+    });
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    backTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    function observeFadeIns() { document.querySelectorAll('.fade-in').forEach(el => io.observe(el)); }
+
+    // ─── INIT ─────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSocial(); renderAll(); observeFadeIns();
+    });
+  </script>
 </body>
-
 </html>
