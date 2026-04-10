@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GVH 2026 — Case Study · Jane Huang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF6600;
+    --orange-light: #FFE6CC;
+    --orange-hover: #E55A00;
+    --blue: #0077CC;
+    --text: #1A1A1A;
+    --muted: #666666;
+    --bg: #F5F5F5;
+    --white: #FFFFFF;
+    --border: #EEEEEE;
+    --max: 900px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--orange); }
+  .nav-title {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .nav-tag {
+    font-size: 11px;
+    background: var(--orange-light);
+    color: var(--orange);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--white);
+    padding: 72px 40px 64px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .project-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+  .project-tag::before {
+    content: '';
+    width: 20px;
+    height: 2px;
+    background: var(--orange);
+    border-radius: 1px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 54px);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  h1 span { font-style: italic; font-weight: 400; color: var(--orange); }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .meta-value { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* ── SECTIONS ── */
+  .section {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 64px 40px;
+  }
+
+  .section + .section { padding-top: 0; }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+
+  .section-intro {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 580px;
+    margin-bottom: 32px;
+  }
+
+  /* ── PROBLEM BOX ── */
+  .problem-box {
+    background: #FFF8F4;
+    border: 1px solid #FFD4B2;
+    border-left: 4px solid var(--orange);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  .problem-box p { font-size: 14px; line-height: 1.7; color: var(--text); }
+  .problem-box strong { color: var(--orange); }
+
+  /* ── TWO-COL ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+
+  .col-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .col-card .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .col-card .card-icon { font-size: 18px; }
+  .col-card .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .col-card p { font-size: 13px; line-height: 1.65; color: var(--muted); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  /* ── PRODUCT STACK ── */
+  .product-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: box-shadow 0.25s;
+  }
+  .product-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09); }
+
+  .product-header {
+    padding: 24px 28px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .product-left {}
+  .product-num {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .product-desc { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 480px; }
+
+  .product-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .badge.public { background: #EAF6EC; color: #2D8A45; }
+  .badge.internal { background: #FFF3E0; color: #E65100; }
+  .badge.vibe { background: #E8F0FE; color: var(--blue); }
+
+  .product-body {
+    border-top: 1px solid var(--border);
+    padding: 0;
+  }
+
+  /* Tabs */
+  .tab-nav {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    gap: 0;
+  }
+  .tab-btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Live preview */
+  .live-preview {
+    position: relative;
+    background: var(--bg);
+  }
+  .preview-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .d1 { background: #FF5F57; }
+  .d2 { background: #FEBC2E; }
+  .d3 { background: #28C840; }
+  .preview-url {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 10px;
+    flex: 1;
+    max-width: 360px;
+  }
+  .preview-live {
+    font-size: 10px;
+    color: #2D8A45;
+    background: #EAF6EC;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  iframe {
+    width: 100%;
+    height: 560px;
+    border: none;
+    display: block;
+  }
+
+  /* Details tab */
+  .details-grid {
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width:600px){ .details-grid { grid-template-columns: 1fr; } }
+
+  .detail-item { display: flex; flex-direction: column; gap: 4px; }
+  .detail-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .detail-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+  .feature-list {
+    padding: 0 28px 28px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .feature-list li {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    line-height: 1.5;
+  }
+  .feature-list li::before {
+    content: '→';
+    color: var(--orange);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  /* Confidential notice */
+  .confidential-notice {
+    margin: 16px 28px 0;
+    padding: 12px 16px;
+    background: #FFF8F4;
+    border: 1px solid #FFD4B2;
+    border-radius: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .confidential-notice .ci { flex-shrink: 0; font-size: 14px; }
+
+  /* Screenshot mockup for internal tools */
+  .mockup-container {
+    padding: 28px;
+  }
+  .mockup-browser {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .mockup-bar {
+    background: #F0F0F0;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mockup-content {
+    background: #0d0d14;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .mockup-content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 40% at 20% 30%, rgba(0,212,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 80% 70%, rgba(255,107,53,0.06) 0%, transparent 60%);
+  }
+  .mockup-inner {
+    position: relative;
+    text-align: center;
+    padding: 40px;
+    color: white;
+  }
+  .mockup-inner .mi-tag {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 12px;
+  }
+  .mockup-inner .mi-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .mockup-inner .mi-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 24px;
+  }
+  .mockup-inner .mi-lock {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: rgba(255,180,80,0.8);
+    background: rgba(255,150,0,0.1);
+    border: 1px solid rgba(255,150,0,0.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  /* Jarvis embed */
+  .jarvis-embed {
+    padding: 0;
+  }
+  .jarvis-embed iframe {
+    height: 700px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  /* ── IMPACT ── */
+  .impact-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media(max-width:600px){ .impact-row { grid-template-columns: 1fr; } }
+
+  .impact-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .impact-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .impact-label { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* PM decisions */
+  .pm-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .pm-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .pm-item:last-child { border-bottom: none; }
+  .pm-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--orange);
+    flex-shrink: 0;
+    padding-top: 2px;
+    width: 24px;
+    font-family: 'Inter', monospace;
+  }
+  .pm-text { font-size: 14px; color: var(--text); line-height: 1.65; }
+  .pm-text strong { font-weight: 600; }
+
+  /* ── REFLECTION ── */
+  .reflection-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .reflection-box blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 16px;
+    border-left: 3px solid var(--orange);
+    padding-left: 20px;
+  }
+  .reflection-box p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--white);
+    padding: 40px;
+    margin-top: 64px;
+  }
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-left { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .footer-left strong { display: block; color: var(--text); font-weight: 600; margin-bottom: 2px; }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    background: var(--orange);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 7px;
+    transition: background 0.2s;
+  }
+  .back-btn:hover { background: var(--orange-hover); }
+
+  /* Scroll animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://janee1107.github.io/Jane_Portfolio/" class="nav-back">← Back to Portfolio</a>
+  <span class="nav-title">Case Study</span>
+  <span class="nav-tag">MediaTek · 2026</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="project-tag">Case Study 01</div>
+    <h1>GVH 2026 —<br><span>A Product Ecosystem</span><br>Built from Zero</h1>
+    <p class="hero-desc">
+      Three interconnected products. One program. Zero engineering budget.<br>
+      How a communications specialist used vibe coding and AI to build a complete digital product ecosystem for MediaTek's global volunteer recognition program.
+    </p>
+    <div class="meta-row">
+      <div class="meta-item">
+        <span class="meta-label">Role</span>
+        <span class="meta-value">Product Owner · Prompt Engineer · Builder</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Timeline</span>
+        <span class="meta-value">Oct 2025 – Apr 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Scope</span>
+        <span class="meta-value">18,000+ global employees</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Method</span>
+        <span class="meta-value">Vibe Coding · No prior dev background</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKGROUND -->
+<div class="section fade-in">
+  <div class="project-tag">Background</div>
+  <h2>The Starting Point</h2>
+  <p class="section-intro">MediaTek's Global Volunteer Hero Recognition (GVH) is an annual CSR program celebrating employees who dedicate their time to community volunteering. In 2025, the program ran largely on emails, Google Forms, and manual spreadsheets.</p>
+
+  <div class="problem-box">
+    <p>The program had three pain points: employees didn't know it existed, those who did couldn't figure out how to apply, and judges couldn't score efficiently across 40+ applications. <strong>All three problems were mine to solve — with no developer and no budget.</strong></p>
+  </div>
+
+  <div class="two-col">
+    <div class="col-card">
+      <div class="card-head">
+        <div class="card-icon">📢</div>
+        <div class="card-title">Problem 1 — Awareness</div>
+      </div>
+      <p>No dedicated communication channel. Employees learned about GVH through generic newsletters buried in inboxes.</p>
+    </div>
+    <div class="col-card">
+      <div class="card-head">
+        <div class="card-icon">✍️</div>
+        <div class="card-title">Problem 2 — Application Friction</div>
+      </div>
+      <p>"I don't know how to write my story" was the #1 reason employees didn't apply, despite having meaningful volunteer work.</p>
+    </div>
+    <div class="col-card">
+      <div class="card-head">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Problem 3 — Judging Chaos</div>
+      </div>
+      <p>Judges scored via email and Excel with no rubric consistency, no progress tracking, and no central view of results.</p>
+    </div>
+    <div class="col-card">
+      <div class="card-head">
+        <div class="card-icon">💡</div>
+        <div class="card-title">My Approach</div>
+      </div>
+      <p>Build three targeted products — each solving one problem — using AI-assisted vibe coding. No engineering team. Ship in weeks.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- THREE PRODUCTS -->
+<div class="section fade-in">
+  <div class="project-tag">The Solution</div>
+  <h2>Three Products, One Ecosystem</h2>
+  <p class="section-intro">Each product was designed to solve one specific friction point in the employee volunteer recognition lifecycle.</p>
+
+  <div class="product-stack">
+
+    <!-- ── PRODUCT 1: Campaign Site ── -->
+    <div class="product-card">
+      <div class="product-header">
+        <div class="product-left">
+          <div class="product-num">Product 01</div>
+          <div class="product-name">Campaign Website</div>
+          <div class="product-desc">A bilingual awareness hub that introduced the program, explained the award value, and reduced application anxiety — with a direct CTA to Jarvis.</div>
+        </div>
+        <div class="product-badges">
+          <span class="badge public">✓ Public</span>
+          <span class="badge vibe">Vibe Coded</span>
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab(this, 'p1-live')">Live Preview</button>
+          <button class="tab-btn" onclick="switchTab(this, 'p1-details')">Details</button>
+        </div>
+        <div id="p1-live" class="tab-content active">
+          <div class="live-preview">
+            <div class="preview-bar">
+              <div class="browser-dots">
+                <div class="browser-dot d1"></div>
+                <div class="browser-dot d2"></div>
+                <div class="browser-dot d3"></div>
+              </div>
+              <div class="preview-url">janee1107.github.io/GVH/</div>
+              <span class="preview-live">● Live</span>
+            </div>
+            <iframe src="https://janee1107.github.io/GVH/" title="GVH 2026 Campaign Website" loading="lazy"></iframe>
+          </div>
+        </div>
+        <div id="p1-details" class="tab-content">
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Stack</span>
+              <span class="detail-value">HTML / CSS / JavaScript · GitHub Pages</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Language</span>
+              <span class="detail-value">Bilingual EN / 中文 with toggle</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Audience</span>
+              <span class="detail-value">18,000+ MediaTek global employees</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Built by</span>
+              <span class="detail-value">Jane Huang · 0 prior coding experience</span>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li>Program intro, award benefits ($3,000 charity grant), event timeline</li>
+            <li>17-question FAQ covering eligibility, judging criteria, and process</li>
+            <li>Four volunteer category cards to help employees self-identify</li>
+            <li>Primary CTA links directly to Jarvis AI registration agent</li>
+            <li>Mobile-responsive, clean layout with emotional copywriting</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRODUCT 2: Jarvis ── -->
+    <div class="product-card">
+      <div class="product-header">
+        <div class="product-left">
+          <div class="product-num">Product 02</div>
+          <div class="product-name">Jarvis — AI Registration Agent</div>
+          <div class="product-desc">A conversational AI agent built on Microsoft Copilot Studio that interviews employees and generates their complete application story — eliminating the blank page problem.</div>
+        </div>
+        <div class="product-badges">
+          <span class="badge internal">⚿ Internal Only</span>
+          <span class="badge vibe">Prompt Engineered</span>
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="confidential-notice">
+          <span class="ci">🔒</span>
+          <span>Jarvis runs on MediaTek's internal Copilot infrastructure and is not publicly accessible. The interactive demo below reconstructs the real conversation flow from actual user sessions.</span>
+        </div>
+        <div class="tab-nav" style="margin-top:16px;">
+          <button class="tab-btn active" onclick="switchTab(this, 'p2-demo')">Interactive Demo</button>
+          <button class="tab-btn" onclick="switchTab(this, 'p2-details')">Details</button>
+        </div>
+        <div id="p2-demo" class="tab-content active jarvis-embed">
+          <iframe src="jarvis-demo.html" title="Jarvis Demo" loading="lazy"></iframe>
+        </div>
+        <div id="p2-details" class="tab-content">
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Platform</span>
+              <span class="detail-value">Microsoft Copilot Studio (MediaTek internal)</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Languages</span>
+              <span class="detail-value">中文 + English, user-selectable</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Application types</span>
+              <span class="detail-value">Individual · Team · Nomination</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Output</span>
+              <span class="detail-value">Complete submission-ready email + subject line</span>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li>5-step guided interview: Background → Role → Actions → Impact → Resonance</li>
+            <li>Real-time reframing — Jarvis suggests narratives, proposes campaign titles mid-conversation</li>
+            <li>Strategic coaching — advises what to include/exclude based on judging criteria</li>
+            <li>Team application support with member identification and role separation</li>
+            <li>Photo usage rights embedded naturally as a conversational checkbox</li>
+            <li>Final output includes exact email subject, recipient, and attachment instructions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRODUCT 3: Review Platform ── -->
+    <div class="product-card">
+      <div class="product-header">
+        <div class="product-left">
+          <div class="product-num">Product 03</div>
+          <div class="product-name">Digital Review Platform</div>
+          <div class="product-desc">A structured scoring system for internal and external judges — with weighted rubrics, real-time progress tracking, and automatic score aggregation.</div>
+        </div>
+        <div class="product-badges">
+          <span class="badge public">✓ Public</span>
+          <span class="badge internal">Auth Required</span>
+          <span class="badge vibe">Vibe Coded</span>
+        </div>
+      </div>
+      <div class="product-body">
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab(this, 'p3-live')">Live Preview</button>
+          <button class="tab-btn" onclick="switchTab(this, 'p3-details')">Details</button>
+        </div>
+        <div id="p3-live" class="tab-content active">
+          <div class="live-preview">
+            <div class="preview-bar">
+              <div class="browser-dots">
+                <div class="browser-dot d1"></div>
+                <div class="browser-dot d2"></div>
+                <div class="browser-dot d3"></div>
+              </div>
+              <div class="preview-url">janee1107.github.io/GVH_2026_Review/</div>
+              <span class="preview-live">● Live</span>
+            </div>
+            <iframe src="https://janee1107.github.io/GVH_2026_Review/" title="GVH Review Platform" loading="lazy"></iframe>
+          </div>
+        </div>
+        <div id="p3-details" class="tab-content">
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Stack</span>
+              <span class="detail-value">Vanilla HTML / CSS / JS · localStorage · CSV</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Judges supported</span>
+              <span class="detail-value">Internal + external, 50/50 weighted split</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Applications</span>
+              <span class="detail-value">42 entries · 3 scoring dimensions</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Network handling</span>
+              <span class="detail-value">Auto-sync (personal wifi) or CSV export (corporate)</span>
+            </div>
+          </div>
+          <ul class="feature-list">
+            <li>Weighted scoring: Action 40% · Impact 35% · Resonance 25% + long-term bonus</li>
+            <li>4-tier rubric with written descriptors for each scoring level</li>
+            <li>Real-time dashboard with live weighted ranking across all applicants</li>
+            <li>Network-aware data strategy — detects firewall and adapts UX accordingly</li>
+            <li>Keyboard navigation (← → Enter) for fast scoring flow</li>
+            <li>Admin dashboard with judge progress overview and comment aggregation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /product-stack -->
+</div>
+
+<hr class="divider">
+
+<!-- IMPACT -->
+<div class="section fade-in">
+  <div class="project-tag">Outcome</div>
+  <h2>What Changed</h2>
+  <p class="section-intro">Results from the 2026 GVH program cycle.</p>
+
+  <div class="impact-row">
+    <div class="impact-card">
+      <div class="impact-num">40</div>
+      <div class="impact-label">Applications received — a new program record</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">10min</div>
+      <div class="impact-label">Average time to complete an application via Jarvis</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">0</div>
+      <div class="impact-label">Developers used. Built entirely by one PM with AI.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PM DECISIONS -->
+<div class="section fade-in">
+  <div class="project-tag">What I Learned</div>
+  <h2>The PM Decisions That Mattered</h2>
+  <p class="section-intro">The hardest part wasn't the code — it was the product thinking behind each design choice.</p>
+
+  <ul class="pm-list">
+    <li class="pm-item">
+      <span class="pm-num">01</span>
+      <span class="pm-text"><strong>Treat Jarvis as an interview, not a form.</strong> People freeze at blank boxes but answer questions naturally. Designing it as a journalist-style dialogue removed the psychological barrier to starting.</span>
+    </li>
+    <li class="pm-item">
+      <span class="pm-num">02</span>
+      <span class="pm-text"><strong>Build the review rubric into the scoring UI, not a separate PDF.</strong> Previous cycles had inconsistent scores because judges had to reference external guidelines. Embedding 4-tier descriptors next to each slider eliminated the gap.</span>
+    </li>
+    <li class="pm-item">
+      <span class="pm-num">03</span>
+      <span class="pm-text"><strong>Design for two network environments from day one.</strong> Knowing judges would mix corporate wifi (firewall) and personal networks, I built two parallel data paths — auto-sync and manual CSV — with clear UX prompts for each scenario.</span>
+    </li>
+    <li class="pm-item">
+      <span class="pm-num">04</span>
+      <span class="pm-text"><strong>The campaign site's job is to remove anxiety, not showcase features.</strong> The FAQ isn't a legal document — it's a reassuring conversation with a skeptical employee. Tone is a product decision.</span>
+    </li>
+    <li class="pm-item">
+      <span class="pm-num">05</span>
+      <span class="pm-text"><strong>Three products, one coherent user journey.</strong> Each product hands off to the next: Site → Jarvis → Platform. The ecosystem works because the CTA architecture connects them, not because each piece is individually great.</span>
+    </li>
+  </ul>
+</div>
+
+<hr class="divider">
+
+<!-- REFLECTION -->
+<div class="section fade-in">
+  <div class="reflection-box">
+    <blockquote>"The best tool I had wasn't a framework — it was knowing exactly what problem each product needed to solve."</blockquote>
+    <p>This project started as a communications task. It became a full product lifecycle: problem definition, user research (asking why people didn't apply), system design, build, and iteration. Doing it with no dev background forced me to be rigorous about requirements — because vague prompts produce vague products. Every feature earned its place by solving a real friction point.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <strong>Jane Huang · MediaTek Internal Communications</strong>
+      GVH 2026 · Built with AI-assisted vibe coding · Oct 2025 – Apr 2026
+    </div>
+    <a href="https://janee1107.github.io/Jane_Portfolio/" class="back-btn">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+function switchTab(btn, targetId) {
+  // Find all tabs in this card
+  const card = btn.closest('.product-card');
+  card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  card.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  card.querySelector('#' + targetId).classList.add('active');
+}
+
+// Scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
