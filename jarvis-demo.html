@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+E html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -417,37 +417,77 @@
   .impact-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
   /* ── PM INSIGHT ── */
-  .insight-box {
+  /* ── PM DECISIONS ── */
+  .pm-section {
     margin-top: 40px;
-    padding: 32px;
-    background: linear-gradient(135deg, rgba(255,107,53,0.06), rgba(0,212,255,0.04));
-    border: 1px solid rgba(255,107,53,0.15);
-    border-radius: 16px;
   }
-  .insight-box h3 {
+  .pm-section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .pm-section-head h3 {
     font-family: 'DM Serif Display', serif;
     font-size: 22px;
-    margin-bottom: 16px;
   }
-  .insight-list {
-    list-style: none;
+  .pm-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    background: rgba(255,107,53,0.08);
+    border: 1px solid rgba(255,107,53,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .pm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 640px) { .pm-grid { grid-template-columns: 1fr; } }
+  .pm-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    transition: border-color 0.2s;
   }
-  .insight-list li {
+  .pm-card:hover { border-color: rgba(255,107,53,0.3); }
+  .pm-card-top {
     display: flex;
+    align-items: center;
     gap: 10px;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #b0b0c0;
   }
-  .insight-list li::before {
-    content: '→';
-    color: var(--accent);
+  .pm-num {
     font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(255,107,53,0.08);
+    border-radius: 6px;
+    padding: 2px 7px;
     flex-shrink: 0;
-    margin-top: 1px;
+  }
+  .pm-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .pm-card-body {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    padding-left: 2px;
+  }
+  .pm-card-wide {
+    grid-column: 1 / -1;
   }
 
   /* ── FOOTER ── */
@@ -506,7 +546,7 @@
   <h1>Meet <em>Jarvis</em> —<br>The AI That Writes<br>Your Story</h1>
   <p class="subtitle">
     A custom AI registration agent built for MediaTek's Global Volunteer Hero Recognition program. 
-    Jarvis turns a 5-minute conversation into a polished volunteer story — removing the #1 barrier to participation.
+    Jarvis turns a 10-minute conversation into a polished volunteer story — removing the #1 barrier to participation.
   </p>
   <div class="hero-meta">
     <div class="meta-item">
@@ -640,7 +680,7 @@
       <div class="impact-desc">Applications received in 2026 — a new GVH program record</div>
     </div>
     <div class="impact-card">
-      <div class="impact-num blue">~5 min</div>
+      <div class="impact-num blue">~10 min</div>
       <div class="impact-desc">Average time to complete an application via Jarvis vs. hours before</div>
     </div>
     <div class="impact-card">
@@ -649,15 +689,54 @@
     </div>
   </div>
 
-  <div class="insight-box">
-    <h3>PM Design Decisions Behind Jarvis</h3>
-    <ul class="insight-list">
-      <li>Structured the conversation as a <strong>journalist-style interview</strong> (not a form) — because people answer questions naturally but freeze at blank boxes</li>
-      <li>Built <strong>Jarvis-side validation and reframing</strong> mid-conversation — e.g. "your beach cleanup has a long-tail effect, the content keeps spreading after the event" — to help users see their own story's value</li>
-      <li>Designed the <strong>final output as a copy-ready email</strong> with exact subject line and send-to instructions — reducing zero-friction to absolute minimum</li>
-      <li>Handled the <strong>team vs. individual application split</strong> with different conversation paths, including team member identification and role clarification</li>
-      <li>Added a <strong>photo usage rights checkbox</strong> within the flow — legal requirement embedded naturally without feeling like a legal form</li>
-    </ul>
+  <div class="pm-section">
+    <div class="pm-section-head">
+      <h3>PM Design Decisions Behind Jarvis</h3>
+      <span class="pm-section-label">5 decisions</span>
+    </div>
+    <div class="pm-grid">
+
+      <div class="pm-card">
+        <div class="pm-card-top">
+          <span class="pm-num">01</span>
+          <span class="pm-card-title">Interview, not a form</span>
+        </div>
+        <p class="pm-card-body">People freeze at blank text boxes but answer questions naturally. Structuring Jarvis as a journalist-style interview removed the #1 barrier to starting an application.</p>
+      </div>
+
+      <div class="pm-card">
+        <div class="pm-card-top">
+          <span class="pm-num">02</span>
+          <span class="pm-card-title">Mid-conversation reframing</span>
+        </div>
+        <p class="pm-card-body">Jarvis doesn't just record — it validates and reframes. "Your beach cleanup has a long-tail effect; the content keeps spreading after the event." Users leave understanding their own story's value.</p>
+      </div>
+
+      <div class="pm-card">
+        <div class="pm-card-top">
+          <span class="pm-num">03</span>
+          <span class="pm-card-title">Copy-ready email output</span>
+        </div>
+        <p class="pm-card-body">The final output is a complete email — exact subject line, recipient address, and attachment instructions included. Zero gap between conversation and submission.</p>
+      </div>
+
+      <div class="pm-card">
+        <div class="pm-card-top">
+          <span class="pm-num">04</span>
+          <span class="pm-card-title">Branched paths for team vs. individual</span>
+        </div>
+        <p class="pm-card-body">Team applications require different information: member IDs, role separation, shared vs. individual contributions. Jarvis routes each applicant into the right interview structure from the start.</p>
+      </div>
+
+      <div class="pm-card pm-card-wide">
+        <div class="pm-card-top">
+          <span class="pm-num">05</span>
+          <span class="pm-card-title">Legal requirement embedded as a natural moment</span>
+        </div>
+        <p class="pm-card-body">Photo usage rights are a mandatory legal checkbox — but burying it in fine print kills momentum. Jarvis introduces it conversationally mid-flow, so it feels like a thoughtful question rather than a legal hurdle.</p>
+      </div>
+
+    </div>
   </div>
 </div>
 
